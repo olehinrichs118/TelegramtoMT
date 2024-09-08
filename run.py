@@ -405,16 +405,16 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
 
     #update.effective_message.reply_text("Unknown command. Use /trade to place a trade or /calculate to find information for a trade. You can also use the /help command to view instructions for this bot.")
     signal = update.effective_message.text
-    #lines = signal.splitlines()
+    trade = {}
     
     for line in signal.splitlines():
-        #if len(line.strip()) == 0 :
-        #    continue
+        if len(line.strip()) == 0 :
+            continue
             
         update.effective_message.reply_text(line)
         
-        #if('Buy Limit'.lower() or 'Buylimit'.lower() in line.lower()):
-         #   trade['OrderType'] = 'Buy Limit'
+        if('Buy Limit'.lower() or 'Buylimit'.lower() in line.lower()):
+            trade['OrderType'] = 'Buy Limit'
 
         #elif('Sell Limit'.lower() or 'Selllimit'.lower() in line.lower()):
         #    trade['OrderType'] = 'Sell Limit'
