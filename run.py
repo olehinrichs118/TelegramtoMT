@@ -408,8 +408,8 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     lines = signal.splitlines()
     
     for line in lines:
-        if len(line.strip()) == 0 :
-            continue
+        #if len(line.strip()) == 0 :
+        #    continue
             
         update.effective_message.reply_text(line)
         if('Buy Limit'.lower() or 'Buylimit'.lower() in line.lower()):
