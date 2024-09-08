@@ -405,11 +405,12 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
 
     #update.effective_message.reply_text("Unknown command. Use /trade to place a trade or /calculate to find information for a trade. You can also use the /help command to view instructions for this bot.")
     signal = update.effective_message.text
-    #for line in signal.splitlines():
-    #    update.effective_message.reply_text(line)
+    lines = signal.splitlines()
+    for line in signal.splitlines():
+        update.effective_message.reply_text(line)
 
     #update.effective_message.reply_text("You entered that massage:")
-    update.effective_message.reply_text(signal)
+    #update.effective_message.reply_text(signal)
     
     return
 
