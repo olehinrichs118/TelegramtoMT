@@ -456,6 +456,8 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
         update.effective_message.reply_text("TP1 = ")
         update.effective_message.reply_text(firstTP)
+        trade['TP'] = float(firstTP)
+        
     #check second TP:
         TPposition2 = signal.lower()[TPposition:].find('tp')
         if TPposition2 != -1:
@@ -469,9 +471,10 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     if SLposition == -1:
         update.effective_message.reply_text("no SL found")
     else:
-        stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])
+        stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
         update.effective_message.reply_text("SL = ")
         update.effective_message.reply_text(stoploss)
+        trade['StopLoss'] = float((stoploss)
     
     #update.effective_message.reply_text("You entered that message:")
     update.effective_message.reply_text(trade)
