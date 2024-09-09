@@ -417,7 +417,8 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
       #      continue
             
         #update.effective_message.reply_text(line)
-
+    update.effective_message.reply_text("check what Order type")
+    
     #check what Order type:
     if('Buy Limit'.lower() or 'Buylimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Limit'
@@ -433,7 +434,9 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         trade['OrderType'] = 'Sell'
     else:
         update.effective_message.reply_text("no signal found")
-
+        
+    update.effective_message.reply_text(trade['OrderType'])
+    
     #check which Symbol:
     if('Dow'.lower() or 'US30'.lower() or 'US 30'.lower() in signal.lower()):
         if(broker == 'vantage'):
@@ -474,7 +477,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
         update.effective_message.reply_text("SL = ")
         update.effective_message.reply_text(stoploss)
-        trade['StopLoss'] = float((stoploss)
+        trade['StopLoss'] = float(stoploss)
     
     #update.effective_message.reply_text("You entered that message:")
     update.effective_message.reply_text(trade)
