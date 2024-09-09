@@ -418,10 +418,12 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
             
         #update.effective_message.reply_text(line)
     update.effective_message.reply_text("check what Order type")
+    update.effective_message.reply_text(signal)
     
     #check what Order type:
     if('Buy Limit'.lower() or 'Buylimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Limit'
+        update.effective_message.reply_text("in Buy Limit")
     elif('Sell Limit'.lower() or 'Selllimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Limit'
     elif('Buy Stop'.lower() or 'Buystop'.lower() in signal.lower()):
@@ -430,6 +432,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         trade['OrderType'] = 'Sell Stop'
     elif('Buy'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
+        update.effective_message.reply_text("in Buy")
     elif('Sell'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
     else:
@@ -441,6 +444,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     if('Dow'.lower() or 'US30'.lower() or 'US 30'.lower() in signal.lower()):
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
+            update.effective_message.reply_text("in DJ30")
     elif('Nasdaq'.lower() or 'Nas'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
@@ -451,9 +455,13 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         update.effective_message.reply_text("no known symbol found")
     
     #check TP:
-    TPposition = signal.lower().find('tp')
+    if(signal.lower().find('tp1') == -1):
+        TPposition = signal.lower().find('tp')
+    else: 
+        TPposition = signal.lower().find('tp1')    
     update.effective_message.reply_text(TPposition)
-    if TPposition == -1:
+    
+    if(TPposition == -1):
         update.effective_message.reply_text("no TP found")
     else:
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
@@ -462,11 +470,17 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         trade['TP'] = float(firstTP)
         
     #check second TP:
-        TPposition2 = signal.lower()[TPposition:].find('tp')
+        if(signal.lower().find('tp2') == -1):
+            TPposition2 = signal.lower()[TPposition:].find('tp')
+        else: 
+            TPposition2 = signal.lower().find('tp2')
+            
         if TPposition2 != -1:
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
             update.effective_message.reply_text("TP2 = ")
             update.effective_message.reply_text(secondTP)
+        else: 
+            update.effective_message.reply_text("no TP2 defined")
         
     #check SL:
     SLposition = signal.find('SL')
