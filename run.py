@@ -421,14 +421,14 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     update.effective_message.reply_text(signal)
     
     #check what Order type:
-    if('Buy Limit'.lower() or 'Buylimit'.lower() in signal.lower()):
+    if('Buy Limit'.lower() in signal.lower() or 'Buylimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Limit'
         update.effective_message.reply_text("in Buy Limit")
-    elif('Sell Limit'.lower() or 'Selllimit'.lower() in signal.lower()):
+    elif('Sell Limit'.lower() in signal.lower() or 'Selllimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Limit'
-    elif('Buy Stop'.lower() or 'Buystop'.lower() in signal.lower()):
+    elif('Buy Stop'.lower() in signal.lower() or 'Buystop'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Stop'
-    elif('Sell Stop'.lower() or 'Sellstop'.lower() in signal.lower()):
+    elif('Sell Stop'.lower() in signal.lower() or 'Sellstop'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Stop'
     elif('Buy'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
@@ -441,11 +441,11 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     update.effective_message.reply_text(trade['OrderType'])
     
     #check which Symbol:
-    if('Dow'.lower() or 'US30'.lower() or 'US 30'.lower() in signal.lower()):
+    if('Dow'.lower() in signal.lower() or 'US30'.lower() in signal.lower() or 'US 30'.lower() in signal.lower()):
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
             update.effective_message.reply_text("in DJ30")
-    elif('Nasdaq'.lower() or 'Nas'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
+    elif('Nasdaq'.lower() in signal.lower() or 'Nas'.lower() in signal.lower() or 'US100'.lower() in signal.lower() or 'US 100'.lower() in signal.lower()):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
     #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
