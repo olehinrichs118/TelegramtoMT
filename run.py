@@ -408,6 +408,9 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     signal = update.effective_message.text
     trade = {}
     broker = 'vantage'
+    firstTP = []
+    secondTP = []
+    stoploss = []
     
     #for line in signal.splitlines():
      #   if len(line.strip()) == 0 :
@@ -426,11 +429,10 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         trade['OrderType'] = 'Sell Stop'
     elif('Buy'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
-    elif('Sell'.lower() in line.lower()):
+    elif('Sell'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
     else:
         update.effective_message.reply_text("no signal found")
-        return
 
     #check which Symbol:
     if('Dow'.lower() or 'US30'.lower() or 'US 30'.lower() in signal.lower()):
@@ -444,25 +446,22 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     #        trade['Symbol'] = 'NAS100'
     else:
         update.effective_message.reply_text("no known symbol found")
-        return
     
     #check TP:
-    TPposition = signal.find('TP')
+    TPposition = signal.lower().find('tp')
     update.effective_message.reply_text(TPposition)
     if TPposition == -1:
         update.effective_message.reply_text("no TP found")
     else:
-        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])
+        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
         update.effective_message.reply_text("TP1 = ")
         update.effective_message.reply_text(firstTP)
     #check second TP:
-        TPposition2 = signal[TPposition:].find('TP')
+        TPposition2 = signal.lower()[TPposition:].find('tp')
         if TPposition2 != -1:
-            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])
+            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
             update.effective_message.reply_text("TP2 = ")
             update.effective_message.reply_text(secondTP)
-
-    
         
     #check SL:
     SLposition = signal.find('SL')
