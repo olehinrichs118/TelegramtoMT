@@ -449,7 +449,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     #check TP:
     TPposition = signal.find('TP')
     update.effective_message.reply_text(TPposition)
-    if TPposition = -1:
+    if TPposition == -1:
         update.effective_message.reply_text("no TP found")
     else:
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])
@@ -467,7 +467,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     check SL:
     SLposition = signal.find('SL')
     update.effective_message.reply_text(SLposition)
-    if SLposition = -1:
+    if SLposition == -1:
         update.effective_message.reply_text("no SL found")
     else:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])
