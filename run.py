@@ -3,6 +3,7 @@ import asyncio
 import logging
 import math
 import os
+import re
 
 try:
     from typing import Literal
@@ -406,33 +407,75 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     #update.effective_message.reply_text("Unknown command. Use /trade to place a trade or /calculate to find information for a trade. You can also use the /help command to view instructions for this bot.")
     signal = update.effective_message.text
     trade = {}
+    broker = 'vantage'
     
-    for line in signal.splitlines():
-        if len(line.strip()) == 0 :
-            continue
+    #for line in signal.splitlines():
+     #   if len(line.strip()) == 0 :
+      #      continue
             
-        update.effective_message.reply_text(line)
+        #update.effective_message.reply_text(line)
+
+    #check what Order type:
+    if('Buy Limit'.lower() or 'Buylimit'.lower() in signal.lower()):
+        trade['OrderType'] = 'Buy Limit'
+    elif('Sell Limit'.lower() or 'Selllimit'.lower() in signal.lower()):
+        trade['OrderType'] = 'Sell Limit'
+    elif('Buy Stop'.lower() or 'Buystop'.lower() in signal.lower()):
+        trade['OrderType'] = 'Buy Stop'
+    elif('Sell Stop'.lower() or 'Sellstop'.lower() in signal.lower()):
+        trade['OrderType'] = 'Sell Stop'
+    elif('Buy'.lower() in signal.lower()):
+        trade['OrderType'] = 'Buy'
+    elif('Sell'.lower() in line.lower()):
+        trade['OrderType'] = 'Sell'
+    else:
+        update.effective_message.reply_text("no signal found")
+        return
+
+    #check which Symbol:
+    if('Dow'.lower() or 'US30'.lower() or 'US 30'.lower() in signal.lower()):
+        if(broker == 'vantage'):
+            trade['Symbol'] = 'DJ30'
+    elif('Nasdaq'.lower() or 'Nas'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
+        if(broker == 'vantage'):
+            trade['Symbol'] = 'NAS100'
+    #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
+    #    if(broker == 'vantage'):
+    #        trade['Symbol'] = 'NAS100'
+    else:
+        update.effective_message.reply_text("no known symbol found")
+        return
+    
+    #check TP:
+    TPposition = signal.find('TP')
+    update.effective_message.reply_text(TPposition)
+    if TPposition = -1:
+        update.effective_message.reply_text("no TP found")
+    else:
+        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])
+        update.effective_message.reply_text("TP1 = ")
+        update.effective_message.reply_text(firstTP)
+    #check second TP:
+        TPposition2 = signal[TPposition:].find('TP')
+        if TPposition2 != -1:
+            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])
+            update.effective_message.reply_text("TP2 = ")
+            update.effective_message.reply_text(secondTP)
+
+    
         
-        if('Buy Limit'.lower() or 'Buylimit'.lower() in line.lower()):
-            trade['OrderType'] = 'Buy Limit'
-
-        #elif('Sell Limit'.lower() or 'Selllimit'.lower() in line.lower()):
-        #    trade['OrderType'] = 'Sell Limit'
-
-        #elif('Buy Stop'.lower() or 'Buystop'.lower() in line.lower()):
-        #    trade['OrderType'] = 'Buy Stop'
-
-        #elif('Sell Stop'.lower() or 'Sellstop'.lower() in line.lower()):
-        #    trade['OrderType'] = 'Sell Stop'
-
-        #elif('Buy'.lower() in line.lower()):
-        #    trade['OrderType'] = 'Buy'
+    check SL:
+    SLposition = signal.find('SL')
+    update.effective_message.reply_text(SLposition)
+    if SLposition = -1:
+        update.effective_message.reply_text("no SL found")
+    else:
+        stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])
+        update.effective_message.reply_text("SL = ")
+        update.effective_message.reply_text(stoploss)
     
-        #elif('Sell'.lower() in line.lower()):
-        #    trade['OrderType'] = 'Sell'
-    
-    #update.effective_message.reply_text("You entered that massage:")
-    #update.effective_message.reply_text(signal)
+    #update.effective_message.reply_text("You entered that message:")
+    update.effective_message.reply_text(trade)
     
     return
 
