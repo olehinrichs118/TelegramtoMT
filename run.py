@@ -464,7 +464,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
 
     
         
-    check SL:
+    #check SL:
     SLposition = signal.find('SL')
     update.effective_message.reply_text(SLposition)
     if SLposition == -1:
