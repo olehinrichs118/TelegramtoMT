@@ -453,6 +453,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     else: 
         Entryposition = -1
         OrderTypeExists = False
+        
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
@@ -471,6 +472,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         Entryposition = signal.lower().find('US 100')
     else: 
         Entryposition = -1
+
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
@@ -520,7 +522,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
             update.effective_message.reply_text("no TP2 defined")
         
     #check SL:
-    SLposition = signal.find('SL')
+    SLposition = signal.lower().find('sl')
     update.effective_message.reply_text(SLposition)
     if SLposition == -1:
         update.effective_message.reply_text("no SL found")
