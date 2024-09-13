@@ -445,11 +445,11 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     
     #check which Symbol:
     if('Dow'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('Dow')
+        Entryposition = signal.lower().find('dow')
     elif('US30'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('US30')
+        Entryposition = signal.lower().find('us30')
     elif('US 30'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('US 30')
+        Entryposition = signal.lower().find('us 30')
     else: 
         Entryposition = -1
         OrderTypeExists = False
@@ -463,13 +463,13 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         Entryposition = -1
 
     elif('Nasdaq'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('Nasdaq')
+        Entryposition = signal.lower().find('nasdaq')
     elif('Nas'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('Nas')
+        Entryposition = signal.lower().find('nas')
     elif('US100'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('US100')
+        Entryposition = signal.lower().find('us100')
     elif('US 100'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('US 100')
+        Entryposition = signal.lower().find('us 100')
     else: 
         Entryposition = -1
 
