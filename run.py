@@ -521,8 +521,8 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     if(not(update.effective_message.chat.username == TELEGRAM_USER)):
         update.effective_message.reply_text("You are not authorized to use this bot! 🙅🏽‍♂️")
         return  
-    
-    SendTrade
+
+    SendTrade(update, context)
     update.effective_message.reply_text("trade placed")
     
     return
