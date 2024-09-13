@@ -55,58 +55,138 @@ def ParseSignal(signal: str) -> dict:
         a dictionary that contains trade signal information
     """
 
-    # converts message to list of strings for parsing
-    signal = signal.splitlines()
-    signal = [line.rstrip() for line in signal]
-
+    signal = update.effective_message.text
     trade = {}
-
-    # determines the order type of the trade
-    if('Buy Limit'.lower() in signal[0].lower()):
+    broker = 'vantage'
+    firstTP = []
+    secondTP = []
+    stoploss = []
+    Entryposition = -1
+    firstentry = False
+    OrderTypeExists = True
+    
+    #for line in signal.splitlines():
+     #   if len(line.strip()) == 0 :
+      #      continue
+            
+        #update.effective_message.reply_text(line)
+    #update.effective_message.reply_text("check what Order type")
+    #update.effective_message.reply_text(signal)
+    
+    #check what Order type:
+    if('Buy Limit'.lower() in signal.lower() or 'Buylimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Limit'
-
-    elif('Sell Limit'.lower() in signal[0].lower()):
+    elif('Sell Limit'.lower() in signal.lower() or 'Selllimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Limit'
-
-    elif('Buy Stop'.lower() in signal[0].lower()):
+    elif('Buy Stop'.lower() in signal.lower() or 'Buystop'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Stop'
-
-    elif('Sell Stop'.lower() in signal[0].lower()):
+    elif('Sell Stop'.lower() in signal.lower() or 'Sellstop'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Stop'
-
-    elif('Buy'.lower() in signal[0].lower()):
+    elif('Buy'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
-    
-    elif('Sell'.lower() in signal[0].lower()):
+        update.effective_message.reply_text("in Buy")
+    elif('Sell'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
-    
-    # returns an empty dictionary if an invalid order type was given
     else:
-        return {}
+        OrderTypeExists = False
+        update.effective_message.reply_text("no signal found")
+        
+    update.effective_message.reply_text(trade['OrderType'])
+    
+    #check which Symbol:
+    if('Dow'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('dow')
+    elif('US30'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('us30')
+    elif('US 30'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('us 30')
+    else: 
+        Entryposition = -1
+        OrderTypeExists = False
+        
+    if(Entryposition != -1):
+        if(broker == 'vantage'):
+            trade['Symbol'] = 'DJ30'
+            #update.effective_message.reply_text("in DJ30")
+        #find Dow Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+        Entryposition = -1
 
-    # extracts symbol from trade signal
-    trade['Symbol'] = (signal[0].split())[-1].upper()
-    
-    # checks if the symbol is valid, if not, returns an empty dictionary
-    if(trade['Symbol'] not in SYMBOLS):
-        return {}
-    
-    # checks wheter or not to convert entry to float because of market exectution option ("NOW")
-    if(trade['OrderType'] == 'Buy' or trade['OrderType'] == 'Sell'):
-        trade['Entry'] = (signal[1].split())[-1]
-    
+    elif('Nasdaq'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('nasdaq')
+    elif('Nas'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('nas')
+    elif('US100'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('us100')
+    elif('US 100'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('us 100')
+    else: 
+        Entryposition = -1
+
+    if(Entryposition != -1):
+        if(broker == 'vantage'):
+            trade['Symbol'] = 'NAS100'
+        #find Nas Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+        Entryposition = -1
+
+    #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
+    #    if(broker == 'vantage'):
+    #        trade['Symbol'] = 'NAS100'
     else:
-        trade['Entry'] = float((signal[1].split())[-1])
-    
-    trade['StopLoss'] = float((signal[2].split())[-1])
-    trade['TP'] = [float((signal[3].split())[-1])]
+        update.effective_message.reply_text("no known symbol found")
 
-    # checks if there's a fourth line and parses it for TP2
-    if(len(signal) > 4):
-        trade['TP'].append(float(signal[4].split()[-1]))
+    update.effective_message.reply_text("Entry:")
+    update.effective_message.reply_text(firstentry)
     
-    # adds risk factor to trade
-    trade['RiskFactor'] = RISK_FACTOR
+    #check TP:
+    if(signal.lower().find('tp1') == -1):
+        TPposition = signal.lower().find('tp')
+    else: 
+        TPposition = signal.lower().find('tp1')    
+    
+    if(TPposition == -1):
+        update.effective_message.reply_text("no TP found, TP +60 used")
+        if(firstentry != FALSE and trade['OrderType'].lower().find('buy') != -1):
+            trade['TP'] = firstentry + 60
+        else: 
+            trade['TP'] = firstentry - 60
+    else:
+        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
+        update.effective_message.reply_text("TP1 = ")
+        update.effective_message.reply_text(firstTP)
+        trade['TP'] = float(firstTP)
+        
+    #check second TP:
+        if(signal.lower().find('tp2') == -1):
+            TPposition2 = signal.lower()[TPposition:].find('tp')
+        else: 
+            TPposition2 = signal.lower().find('tp2')
+            
+        if(TPposition2 != -1):
+            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
+            update.effective_message.reply_text("TP2 = ")
+            update.effective_message.reply_text(secondTP)
+        else: 
+            update.effective_message.reply_text("no TP2 defined")
+        
+    #check SL:
+    SLposition = signal.lower().find('sl')
+    #update.effective_message.reply_text(SLposition)
+    if SLposition == -1:
+        update.effective_message.reply_text("no SL found")
+    else:
+        stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
+        update.effective_message.reply_text("SL = ")
+        update.effective_message.reply_text(stoploss)
+        trade['StopLoss'] = float(stoploss)
+    
+    #update.effective_message.reply_text("You entered that message:")
+    update.effective_message.reply_text(trade)
+
+    #check, if everthing is there
+    if(OrderTypeExists != True):
+        trade = {}
 
     return trade
 
@@ -341,7 +421,7 @@ def PlaceTrade(update: Update, context: CallbackContext) -> int:
         except Exception as error:
             logger.error(f'Error: {error}')
             errorMessage = f"There was an error parsing this trade 😕\n\nError: {error}\n\nPlease re-enter trade with this format:\n\nBUY/SELL SYMBOL\nEntry \nSL \nTP \n\nOr use the /cancel to command to cancel this action."
-            update.effective_message.reply_text(errorMessage)
+            errorMessage)
 
             # returns to TRADE state to reattempt trade parsing
             return TRADE
@@ -402,142 +482,11 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     """
     if(not(update.effective_message.chat.username == TELEGRAM_USER)):
         update.effective_message.reply_text("You are not authorized to use this bot! 🙅🏽‍♂️")
-        return
-
-    #update.effective_message.reply_text("Unknown command. Use /trade to place a trade or /calculate to find information for a trade. You can also use the /help command to view instructions for this bot.")
-    signal = update.effective_message.text
-    trade = {}
-    broker = 'vantage'
-    firstTP = []
-    secondTP = []
-    stoploss = []
-    Entryposition = -1
-    firstentry = False
-    OrderTypeExists = True
+        return  
     
-    #for line in signal.splitlines():
-     #   if len(line.strip()) == 0 :
-      #      continue
-            
-        #update.effective_message.reply_text(line)
-    update.effective_message.reply_text("check what Order type")
-    update.effective_message.reply_text(signal)
+    PlaceTrade
+    update.effective_message.reply_text("trade placed")
     
-    #check what Order type:
-    if('Buy Limit'.lower() in signal.lower() or 'Buylimit'.lower() in signal.lower()):
-        trade['OrderType'] = 'Buy Limit'
-    elif('Sell Limit'.lower() in signal.lower() or 'Selllimit'.lower() in signal.lower()):
-        trade['OrderType'] = 'Sell Limit'
-    elif('Buy Stop'.lower() in signal.lower() or 'Buystop'.lower() in signal.lower()):
-        trade['OrderType'] = 'Buy Stop'
-    elif('Sell Stop'.lower() in signal.lower() or 'Sellstop'.lower() in signal.lower()):
-        trade['OrderType'] = 'Sell Stop'
-    elif('Buy'.lower() in signal.lower()):
-        trade['OrderType'] = 'Buy'
-        update.effective_message.reply_text("in Buy")
-    elif('Sell'.lower() in signal.lower()):
-        trade['OrderType'] = 'Sell'
-    else:
-        OrderTypeExists = False
-        update.effective_message.reply_text("no signal found")
-        
-    update.effective_message.reply_text(trade['OrderType'])
-    
-    #check which Symbol:
-    if('Dow'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('dow')
-    elif('US30'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('us30')
-    elif('US 30'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('us 30')
-    else: 
-        Entryposition = -1
-        OrderTypeExists = False
-        
-    if(Entryposition != -1):
-        if(broker == 'vantage'):
-            trade['Symbol'] = 'DJ30'
-            #update.effective_message.reply_text("in DJ30")
-        #find Dow Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
-        Entryposition = -1
-
-    elif('Nasdaq'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('nasdaq')
-    elif('Nas'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('nas')
-    elif('US100'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('us100')
-    elif('US 100'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('us 100')
-    else: 
-        Entryposition = -1
-
-    if(Entryposition != -1):
-        if(broker == 'vantage'):
-            trade['Symbol'] = 'NAS100'
-        #find Nas Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
-        Entryposition = -1
-
-    #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
-    #    if(broker == 'vantage'):
-    #        trade['Symbol'] = 'NAS100'
-    else:
-        update.effective_message.reply_text("no known symbol found")
-
-    update.effective_message.reply_text("Entry:")
-    update.effective_message.reply_text(firstentry)
-    
-    #check TP:
-    if(signal.lower().find('tp1') == -1):
-        TPposition = signal.lower().find('tp')
-    else: 
-        TPposition = signal.lower().find('tp1')    
-    update.effective_message.reply_text(TPposition)
-    
-    if(TPposition == -1):
-        update.effective_message.reply_text("no TP found, TP +60 used")
-        if(firstentry != FALSE and trade['OrderType'].lower().find('buy') != -1):
-            trade['TP'] = firstentry + 60
-        else: 
-            trade['TP'] = firstentry - 60
-    else:
-        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
-        update.effective_message.reply_text("TP1 = ")
-        update.effective_message.reply_text(firstTP)
-        trade['TP'] = float(firstTP)
-        
-    #check second TP:
-        if(signal.lower().find('tp2') == -1):
-            TPposition2 = signal.lower()[TPposition:].find('tp')
-        else: 
-            TPposition2 = signal.lower().find('tp2')
-            
-        if(TPposition2 != -1):
-            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
-            update.effective_message.reply_text("TP2 = ")
-            update.effective_message.reply_text(secondTP)
-        else: 
-            update.effective_message.reply_text("no TP2 defined")
-        
-    #check SL:
-    SLposition = signal.lower().find('sl')
-    update.effective_message.reply_text(SLposition)
-    if SLposition == -1:
-        update.effective_message.reply_text("no SL found")
-    else:
-        stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
-        update.effective_message.reply_text("SL = ")
-        update.effective_message.reply_text(stoploss)
-        trade['StopLoss'] = float(stoploss)
-    
-    #update.effective_message.reply_text("You entered that message:")
-    update.effective_message.reply_text(trade)
-
-    if(OrderTypeExists == True):
-        PlaceTrade
-        update.effective_message.reply_text("trade placed")
     return
 
 
