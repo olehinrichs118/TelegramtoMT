@@ -45,7 +45,7 @@ RISK_FACTOR = float(os.environ.get("RISK_FACTOR"))
 
 
 # Helper Functions
-def ParseSignal(signal: str) -> dict:
+def ParseSignal(update: Update, context: CallbackContext) -> dict:
     """Starts process of parsing signal and entering trade on MetaTrader account.
 
     Arguments:
@@ -400,13 +400,13 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
         update: update from Telegram
         context: CallbackContext object that stores commonly used objects in handler callbacks
     """
-
+    update.effective_message.reply_text("in SendTrade")
     # checks if the trade has already been parsed or not
     if(context.user_data['trade'] == None):
 
         try: 
             # parses signal from Telegram message
-            trade = ParseSignal(update.effective_message.text)
+            trade = ParseSignal(update, context)
             
             # checks if there was an issue with parsing the trade
             if(not(trade)):
@@ -446,7 +446,7 @@ def PlaceTrade(update: Update, context: CallbackContext) -> int:
 
         try: 
             # parses signal from Telegram message
-            trade = ParseSignal(update.effective_message.text)
+            trade = ParseSignal(update, context)
             
             # checks if there was an issue with parsing the trade
             if(not(trade)):
@@ -523,7 +523,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         return  
 
     update.effective_message.reply_text("in unknown")
-    SendTrade(update, context)
+    #SendTrade(update, context)
     update.effective_message.reply_text("trade placed")
     
     return
