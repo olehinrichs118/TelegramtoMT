@@ -89,11 +89,11 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         OrderLater = True
     elif('Buy'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
-        trade['Entry'] == 'NOW'
+        trade['Entry'] = 'NOW'
         update.effective_message.reply_text("in Buy")
     elif('Sell'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
-        trade['Entry'] == 'NOW'
+        trade['Entry'] = 'NOW'
     else:
         OrderTypeExists = False
         update.effective_message.reply_text("no signal found")
