@@ -117,8 +117,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('us 30')
         OrderTypeExists = True
     else: 
-        Entryposition = -1
-        
+        Entryposition = -1        
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
@@ -139,7 +138,6 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('us 100')
     else: 
         Entryposition = -1
-
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
@@ -149,6 +147,18 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['Entry'] = firstentry
         Entryposition = -1
 
+    elif('BTCUSD'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('btcusd')
+    else: 
+        Entryposition = -1
+    if(Entryposition != -1):
+        if(broker == 'vantage'):
+            trade['Symbol'] = 'BTCUSD'
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+        if(OrderLater == True):
+            trade['Entry'] = firstentry
+        Entryposition = -1
+        
     #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
     #    if(broker == 'vantage'):
     #        trade['Symbol'] = 'NAS100'
@@ -166,7 +176,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     
     if(TPposition == -1):
         update.effective_message.reply_text("no TP found, TP +60 used")
-        if(firstentry != FALSE and trade['OrderType'].lower().find('buy') != -1):
+        if(firstentry != False and trade['OrderType'].lower().find('buy') != -1):
             trade['TP'] = firstentry + 60
         else: 
             trade['TP'] = firstentry - 60
@@ -682,8 +692,8 @@ def main() -> None:
     dp.add_handler(conv_handler)
 
     # message handler for all messages that are not included in conversation handler
-    #dp.add_handler(MessageHandler(Filters.text, unknown_command))
-    dp.add_handler(MessageHandler(Filters.text, SendTrade))
+    dp.add_handler(MessageHandler(Filters.text, unknown_command))
+    #dp.add_handler(MessageHandler(Filters.text, SendTrade))
     
     # log all errors
     dp.add_error_handler(error)
