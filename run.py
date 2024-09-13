@@ -65,6 +65,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     firstentry = False
     OrderTypeExists = True
     OrderLater = False
+    OrderTypeExists = False
     
     #for line in signal.splitlines():
      #   if len(line.strip()) == 0 :
@@ -78,24 +79,29 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if('Buy Limit'.lower() in signal.lower() or 'Buylimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Limit'
         OrderLater = True
+        OrderTypeExists = True
     elif('Sell Limit'.lower() in signal.lower() or 'Selllimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Limit'
         OrderLater = True
+        OrderTypeExists = True
     elif('Buy Stop'.lower() in signal.lower() or 'Buystop'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Stop'
         OrderLater = True
+        OrderTypeExists = True
     elif('Sell Stop'.lower() in signal.lower() or 'Sellstop'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Stop'
         OrderLater = True
+        OrderTypeExists = True
     elif('Buy'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
         trade['Entry'] = 'NOW'
         update.effective_message.reply_text("in Buy")
+        OrderTypeExists = True
     elif('Sell'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
         trade['Entry'] = 'NOW'
+        OrderTypeExists = True
     else:
-        OrderTypeExists = False
         update.effective_message.reply_text("no signal found")
         
     update.effective_message.reply_text(trade['OrderType'])
@@ -103,13 +109,15 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     #check which Symbol:
     if('Dow'.lower() in signal.lower()):
         Entryposition = signal.lower().find('dow')
+        OrderTypeExists = True
     elif('US30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us30')
+        OrderTypeExists = True
     elif('US 30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us 30')
+        OrderTypeExists = True
     else: 
         Entryposition = -1
-        OrderTypeExists = False
         
     if(Entryposition != -1):
         if(broker == 'vantage'):
