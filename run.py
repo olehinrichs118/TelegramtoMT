@@ -393,6 +393,44 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
     
     return
 
+def SendTrade(update: Update, context: CallbackContext) -> None:
+    """Parses trade and sends to MetaTrader account.   
+    
+    Arguments:
+        update: update from Telegram
+        context: CallbackContext object that stores commonly used objects in handler callbacks
+    """
+
+    # checks if the trade has already been parsed or not
+    if(context.user_data['trade'] == None):
+
+        try: 
+            # parses signal from Telegram message
+            trade = ParseSignal(update.effective_message.text)
+            
+            # checks if there was an issue with parsing the trade
+            if(not(trade)):
+                raise Exception('Invalid Trade')
+
+            # sets the user context trade equal to the parsed trade
+            context.user_data['trade'] = trade
+            update.effective_message.reply_text("Trade Successfully Parsed! 🥳\nConnecting to MetaTrader ... \n(May take a while) ⏰")
+        
+        except Exception as error:
+            logger.error(f'Error: {error}')
+            errorMessage = f"There was an error parsing this trade 😕\n\nError: {error}\n\nPlease re-enter trade with this format:\n\nBUY/SELL SYMBOL\nEntry \nSL \nTP \n\nOr use the /cancel to command to cancel this action."
+            update.effective_message.reply_text(errorMessage)
+
+            # returns to TRADE state to reattempt trade parsing
+            return TRADE
+    
+    # attempts connection to MetaTrader and places trade
+    asyncio.run(ConnectMetaTrader(update, context.user_data['trade'], True))
+    
+    # removes trade from user context data
+    context.user_data['trade'] = None
+
+    return
 
 # Handler Functions
 def PlaceTrade(update: Update, context: CallbackContext) -> int:
@@ -484,7 +522,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         update.effective_message.reply_text("You are not authorized to use this bot! 🙅🏽‍♂️")
         return  
     
-    PlaceTrade
+    SendTrade
     update.effective_message.reply_text("trade placed")
     
     return
