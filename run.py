@@ -64,6 +64,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     Entryposition = -1
     firstentry = False
     OrderTypeExists = True
+    OrderLater = False
     
     #for line in signal.splitlines():
      #   if len(line.strip()) == 0 :
@@ -76,17 +77,23 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     #check what Order type:
     if('Buy Limit'.lower() in signal.lower() or 'Buylimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Limit'
+        OrderLater = True
     elif('Sell Limit'.lower() in signal.lower() or 'Selllimit'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Limit'
+        OrderLater = True
     elif('Buy Stop'.lower() in signal.lower() or 'Buystop'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy Stop'
+        OrderLater = True
     elif('Sell Stop'.lower() in signal.lower() or 'Sellstop'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell Stop'
+        OrderLater = True
     elif('Buy'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
+        trade['Entry'] == 'NOW'
         update.effective_message.reply_text("in Buy")
     elif('Sell'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
+        trade['Entry'] == 'NOW'
     else:
         OrderTypeExists = False
         update.effective_message.reply_text("no signal found")
@@ -110,6 +117,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             #update.effective_message.reply_text("in DJ30")
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+        if(OrderLater = True):
+            trade['Entry'] = firstentry
         Entryposition = -1
 
     elif('Nasdaq'.lower() in signal.lower()):
@@ -128,6 +137,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['Symbol'] = 'NAS100'
         #find Nas Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+        if(OrderLater = True):
+            trade['Entry'] = firstentry
         Entryposition = -1
 
     #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
@@ -401,16 +412,18 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
         context: CallbackContext object that stores commonly used objects in handler callbacks
     """
     update.effective_message.reply_text("in SendTrade")
+    update.effective_message.reply_text(context.user_data['trade'])
     # checks if the trade has already been parsed or not
     if(context.user_data['trade'] == None):
-
+        update.effective_message.reply_text("trade is None")
         try: 
             # parses signal from Telegram message
+            update.effective_message.reply_text("try parsing")
             trade = ParseSignal(update, context)
             
             # checks if there was an issue with parsing the trade
-            if(not(trade)):
-                raise Exception('Invalid Trade')
+            #if(not(trade)):
+            #    raise Exception('Invalid Trade')
 
             # sets the user context trade equal to the parsed trade
             context.user_data['trade'] = trade
