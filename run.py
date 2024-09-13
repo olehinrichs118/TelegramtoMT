@@ -117,7 +117,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             #update.effective_message.reply_text("in DJ30")
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
-        if(OrderLater = True):
+        if(OrderLater == True):
             trade['Entry'] = firstentry
         Entryposition = -1
 
@@ -137,7 +137,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['Symbol'] = 'NAS100'
         #find Nas Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
-        if(OrderLater = True):
+        if(OrderLater == True):
             trade['Entry'] = firstentry
         Entryposition = -1
 
