@@ -227,7 +227,7 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
         trade: dictionary that stores trade information
         balance: current balance of the MetaTrader account
     """
-
+    update.effective_message.reply_text("in GettradeInfo")
     # calculates the stop loss in pips
     if(trade['Symbol'] == 'XAUUSD'):
         multiplier = 0.1
@@ -356,7 +356,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
         # checks if the order is a market execution to get the current price of symbol
         if(trade['Entry'] == 'NOW'):
             price = await connection.get_symbol_price(symbol=trade['Symbol'])
-
+             update.effective_message.reply_text(price)
             # uses bid price if the order type is a buy
             if(trade['OrderType'] == 'Buy'):
                 trade['Entry'] = float(price['bid'])
@@ -365,9 +365,11 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
             if(trade['OrderType'] == 'Sell'):
                 trade['Entry'] = float(price['ask'])
 
+        update.effective_message.reply_text("GetTradeInformation and enter trade?")
         # produces a table with trade information
         GetTradeInformation(update, trade, account_information['balance'])
-            
+        
+        update.effective_message.reply_text(enterTrade)
         # checks if the user has indicated to enter trade
         if(enterTrade == True):
 
