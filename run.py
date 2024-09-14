@@ -176,15 +176,11 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     
     if(TPposition == -1):
         update.effective_message.reply_text("no TP found, TP +60 used")
-        if(firstentry != False and trade['OrderType'].lower().find('buy') != -1):
-            trade['TP'] = firstentry + 60
-        else: 
-            trade['TP'] = firstentry - 60
     else:
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
         update.effective_message.reply_text("TP1 = ")
         update.effective_message.reply_text(firstTP)
-        trade['TP'] = float(firstTP)
+        trade['TP'] = [float(firstTP)]
         
     #check second TP:
         if(signal.lower().find('tp2') == -1):
@@ -196,6 +192,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
             update.effective_message.reply_text("TP2 = ")
             update.effective_message.reply_text(secondTP)
+             trade['TP'].append(float(secondTP))
         else: 
             update.effective_message.reply_text("no TP2 defined")
         
@@ -236,13 +233,13 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
         multiplier = 0.001
 
     elif(trade['Symbol'] == 'BTCUSD'):
-        multiplier = 0.1
+        multiplier = 1
         
     elif(str(trade['Entry']).index('.') >= 2):
         multiplier = 0.01
 
     else:
-        multiplier = 0.0001
+        multiplier = 1
 
     # calculates the stop loss in pips
     stopLossPips = abs(round((trade['StopLoss'] - trade['Entry']) / multiplier))
@@ -256,11 +253,11 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
     takeProfitPips = []
     for takeProfit in trade['TP']:
         takeProfitPips.append(abs(round((takeProfit - trade['Entry']) / multiplier)))
-
+    
     # creates table with trade information
     table = CreateTable(trade, balance, stopLossPips, takeProfitPips)
     
-    # sends user trade information and calcualted risk
+    # sends user trade information and calculated risk
     update.effective_message.reply_text(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
     return
