@@ -171,25 +171,26 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     #check TP:
     if(signal.lower().find('tp1') == -1):
         TPposition = signal.lower().find('tp')
+        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
     else: 
-        TPposition = signal.lower().find('tp1')    
-    
+        TPposition = signal.lower().find('tp1')  
+        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
     if(TPposition == -1):
         update.effective_message.reply_text("no TP found, TP +60 used")
     else:
-        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
         update.effective_message.reply_text("TP1 = ")
         update.effective_message.reply_text(firstTP)
         trade['TP'] = [float(firstTP)]
         
     #check second TP:
         if(signal.lower().find('tp2') == -1):
-            TPposition2 = signal.lower()[TPposition:].find('tp')
+            TPposition2 = signal.lower()[TPposition+1:].find('tp')
+            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
         else: 
             TPposition2 = signal.lower().find('tp2')
+            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
             
         if(TPposition2 != -1):
-            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
             update.effective_message.reply_text("TP2 = ")
             update.effective_message.reply_text(secondTP)
             trade['TP'].append(float(secondTP))
