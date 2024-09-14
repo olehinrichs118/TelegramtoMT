@@ -552,6 +552,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         return  
 
     update.effective_message.reply_text("in unknown")
+    context.user_data['trade'] = None
     SendTrade(update, context)
     update.effective_message.reply_text("trade placed")
     
