@@ -192,7 +192,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
             update.effective_message.reply_text("TP2 = ")
             update.effective_message.reply_text(secondTP)
-             trade['TP'].append(float(secondTP))
+            trade['TP'].append(float(secondTP))
         else: 
             update.effective_message.reply_text("no TP2 defined")
         
