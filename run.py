@@ -352,11 +352,12 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
         account_information = await connection.get_account_information()
 
         update.effective_message.reply_text("Successfully connected to MetaTrader!\nCalculating trade risk ... 🤔")
-
+        update.effective_message.reply_text("trade['Entry']:")
+        update.effective_message.reply_text(trade['Entry'])
         # checks if the order is a market execution to get the current price of symbol
         if(trade['Entry'] == 'NOW'):
             price = await connection.get_symbol_price(symbol=trade['Symbol'])
-            update.effective_message.reply_text(price)
+            #update.effective_message.reply_text(price)
             # uses bid price if the order type is a buy
             if(trade['OrderType'] == 'Buy'):
                 trade['Entry'] = float(price['bid'])
