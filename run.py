@@ -290,7 +290,7 @@ def CreateTable(trade: dict, balance: float, stopLossPips: int, takeProfitPips: 
     for count, takeProfit in enumerate(takeProfitPips):
         table.add_row([f'TP {count + 1}', f'{takeProfit} pips'])
 
-    table.add_row(['\nRisk Factor', '\n{:,.0f} %'.format(trade['RiskFactor'] * 100)])
+    #table.add_row(['\nRisk Factor', '\n{:,.0f} %'.format(trade['RiskFactor'] * 100)])
     table.add_row(['Position Size', trade['PositionSize']])
     
     table.add_row(['\nCurrent Balance', '\n$ {:,.2f}'.format(balance)])
