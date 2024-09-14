@@ -428,7 +428,7 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
         context: CallbackContext object that stores commonly used objects in handler callbacks
     """
     update.effective_message.reply_text("in SendTrade")
-    update.effective_message.reply_text(context.user_data['trade'])
+    #update.effective_message.reply_text(context.user_data['trade'])
     # checks if the trade has already been parsed or not
     if(context.user_data['trade'] == None):
         update.effective_message.reply_text("trade is None")
@@ -452,6 +452,8 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
 
             # returns to TRADE state to reattempt trade parsing
             return TRADE
+    else:
+        update.effective_message.reply_text("context.user_data['trade'] is not None")
     
     # attempts connection to MetaTrader and places trade
     asyncio.run(ConnectMetaTrader(update, context.user_data['trade'], True))
