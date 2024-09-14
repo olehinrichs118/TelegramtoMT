@@ -125,7 +125,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
-            trade['Entry'] = [float(firstentry)]
+            trade['Entry'] = float(firstentry)
         Entryposition = -1
 
     elif('Nasdaq'.lower() in signal.lower()):
@@ -144,7 +144,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         #find Nas Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
-            trade['Entry'] = [float(firstentry)]
+            trade['Entry'] = float(firstentry)
         Entryposition = -1
 
     elif('BTCUSD'.lower() in signal.lower()):
@@ -156,7 +156,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['Symbol'] = 'BTCUSD'
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
-            trade['Entry'] = [float(firstentry)]
+            trade['Entry'] = float(firstentry)
         Entryposition = -1
         
     #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
@@ -235,9 +235,6 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
 
     elif(trade['Symbol'] == 'BTCUSD'):
         multiplier = 1
-        
-    elif(str(trade['Entry']).index('.') >= 2):
-        multiplier = 0.01
 
     else:
         multiplier = 1
@@ -555,7 +552,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         return  
 
     update.effective_message.reply_text("in unknown")
-    #SendTrade(update, context)
+    SendTrade(update, context)
     update.effective_message.reply_text("trade placed")
     
     return
