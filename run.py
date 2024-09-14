@@ -125,7 +125,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
-            trade['Entry'] = firstentry
+            trade['Entry'] = [float(firstentry)]
         Entryposition = -1
 
     elif('Nasdaq'.lower() in signal.lower()):
@@ -144,7 +144,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         #find Nas Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
-            trade['Entry'] = firstentry
+            trade['Entry'] = [float(firstentry)]
         Entryposition = -1
 
     elif('BTCUSD'.lower() in signal.lower()):
@@ -156,7 +156,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['Symbol'] = 'BTCUSD'
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
-            trade['Entry'] = firstentry
+            trade['Entry'] = [float(firstentry)]
         Entryposition = -1
         
     #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
