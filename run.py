@@ -121,7 +121,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
-            trade['PositionSize'] = 0.5
+            trade['PositionSize'] = 0.4
             #update.effective_message.reply_text("in DJ30")
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
@@ -142,7 +142,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
-            trade['PositionSize'] = 0.5
+            trade['PositionSize'] = 0.4
         #find Nas Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
@@ -176,14 +176,14 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         TPposition = signal.lower().find('tp')
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
         firstTPpos = signal.lower().find(firstTP)
-        firstTPpips = signal[firstTPpos:].split()[0]
-        update.effective_message.reply_text("word after TP number")
+        firstTPpips = signal[firstTPpos:].line()[0]
+        update.effective_message.reply_text("line after TP number")
         update.effective_message.reply_text(firstTPpips)
     else: 
         TPposition = signal.lower().find('tp1')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
         firstTPpos = signal.lower().find(firstTP)
-        firstTPpips = signal[firstTPpos:].split()[0]
+        firstTPpips = signal[firstTPpos:].line()[0]
         update.effective_message.reply_text("word after TP number")
         update.effective_message.reply_text(firstTPpips)
     if(TPposition == -1):
