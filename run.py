@@ -63,9 +63,9 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     stoploss = []
     Entryposition = -1
     firstentry = False
-    OrderTypeExists = True
     OrderLater = False
     OrderTypeExists = False
+    SymbolExists = False
     
     #for line in signal.splitlines():
      #   if len(line.strip()) == 0 :
@@ -122,6 +122,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
             trade['PositionSize'] = 0.4
+            SymbolExists = True
             #update.effective_message.reply_text("in DJ30")
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
@@ -143,6 +144,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
             trade['PositionSize'] = 0.4
+            SymbolExists = True
         #find Nas Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
@@ -157,6 +159,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if(broker == 'vantage'):
             trade['Symbol'] = 'BTCUSD'
             trade['PositionSize'] = 0.1
+            SymbolExists = True
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
@@ -172,58 +175,105 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     update.effective_message.reply_text(firstentry)
     
     #check TP:
-    if(signal.lower().find('tp1') == -1):
-        TPposition = signal.lower().find('tp')
+    if(signal.lower().find('tp1') != -1):
+        TPposition = signal.lower().find('tp1')
+        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
+        firstTPpos = signal.lower().find(firstTP)
+        textafterfirstTP = signal[firstTPpos:].splitlines()[0]
+        if('pips'.lower() in textafterfirstTP.lower()):
+            firstTP = firstTP
+        else:
+            firstTP = firstentry - firstTP
+        #update.effective_message.reply_text("line after TP number")
+        #update.effective_message.reply_text(firstTPpips)
+    elif(signal.lower().find('tp 1') != -1):
+        TPposition = signal.lower().find('tp 1')
+        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
+        firstTPpos = signal.lower().find(firstTP)
+        textafterfirstTP = signal[firstTPpos:].splitlines()[0]
+        if('pips'.lower() in textafterfirstTP.lower()):
+            firstTP = firstTP/10.
+        else:
+            firstTP = firstentry - firstTP
+    else: 
+        TPposition = signal.lower().find('tp')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
         firstTPpos = signal.lower().find(firstTP)
         firstTPpips = signal[firstTPpos:].splitlines()[0]
-        update.effective_message.reply_text("line after TP number")
-        update.effective_message.reply_text(firstTPpips)
-    else: 
-        TPposition = signal.lower().find('tp1')  
-        firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
-        firstTPpos = signal.lower().find(firstTP)
-        firstTPpips = signal[firstTPpos:].splitlines()[0]
-        update.effective_message.reply_text("word after TP number")
-        update.effective_message.reply_text(firstTPpips)
+        if('pips'.lower() in textafterfirstTP.lower()):
+            firstTP = firstTP/10.
+        else:
+            firstTP = firstentry - firstTP
     if(TPposition == -1):
         update.effective_message.reply_text("no TP found, TP +60 used")
+        firstTP = 60
     else:
         update.effective_message.reply_text("TP1 = ")
         update.effective_message.reply_text(firstTP)
-        trade['TP'] = [float(firstTP)]
+        trade['TP'] = firstTP
         
     #check second TP:
-        if(signal.lower().find('tp2') == -1):
+        if(signal.lower().find('tp2') != -1):
+            TPposition2 = signal.lower()[TPposition+1:].find('tp2')
+            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
+            secondTPpos = signal.lower().find(secondTP)
+            textaftersecondTP = signal[secondTPpos:].splitlines()[0]
+            if('pips'.lower() in textaftersecondTP.lower()):
+                secondTP = secondTP/10.
+            else:
+                secondTP = firstentry - secondTP
+                
+        elif(signal.lower().find('tp 2') != -1):
+            TPposition2 = signal.lower()[TPposition+1:].find('tp 2')
+            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
+            secondTPpos = signal.lower().find(secondTP)
+            textaftersecondTP = signal[secondTPpos:].splitlines()[0]
+            if('pips'.lower() in textaftersecondTP.lower()):
+                secondTP = secondTP/10.
+            else:
+                secondTP = firstentry - secondTP
+        else: 
             TPposition2 = signal.lower()[TPposition+1:].find('tp')
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
-        else: 
-            TPposition2 = signal.lower().find('tp2')
-            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
-            
+            secondTPpos = signal.lower().find(secondTP)
+            textaftersecondTP = signal[secondTPpos:].splitlines()[0]
+            if('pips'.lower() in textaftersecondTP.lower()):
+                secondTP = secondTP/10.
+            else:
+                secondTP = firstentry - secondTP
+                
         if(TPposition2 != -1):
             update.effective_message.reply_text("TP2 = ")
             update.effective_message.reply_text(secondTP)
             trade['TP'].append(float(secondTP))
         else: 
-            update.effective_message.reply_text("no TP2 defined")
+            update.effective_message.reply_text("no TP2 defined, use 1000 pips")
+            secondTP = 100
+            trade['TP'].append(float(secondTP))
+            
         
     #check SL:
     SLposition = signal.lower().find('sl')
     #update.effective_message.reply_text(SLposition)
-    if SLposition == -1:
-        update.effective_message.reply_text("no SL found")
+    if(SLposition == -1):
+        update.effective_message.reply_text("No SL, use 800 pips")
+        trade['StopLoss'] = 80.
     else:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
+        textafterSL = signal[SLposition:].splitlines()[0]
+        if('pips'.lower() in textafterSL.lower()):
+            stoploss = stoploss/10.
+        else:
+            stoploss = firstentry - stoploss
         update.effective_message.reply_text("SL = ")
         update.effective_message.reply_text(stoploss)
-        trade['StopLoss'] = float(stoploss)
+        trade['StopLoss'] = stoploss
     
     #update.effective_message.reply_text("You entered that message:")
     update.effective_message.reply_text(trade)
 
     #check, if everthing is there
-    if(OrderTypeExists != True):
+    if(OrderTypeExists != True or SymbolExists != True):
         trade = {}
 
     return trade
@@ -386,6 +436,12 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
             update.effective_message.reply_text("Entering trade on MetaTrader Account ... 👨🏾‍💻")
 
             try:
+                i = 0
+                for takeProfit in trade['TP']:
+                    trade['TP'][i] = float(trade['Entry']) + float(takeProfit)
+                    i = i+1
+                trade['StopLoss'] = float(trade['Entry']) - trade['StopLoss']
+                        
                 # executes buy market execution order
                 if(trade['OrderType'] == 'Buy'):
                     for takeProfit in trade['TP']:
