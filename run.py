@@ -255,7 +255,7 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
 
     # calculates the position size using stop loss and RISK FACTOR
     # trade['PositionSize'] = math.floor(((balance * trade['RiskFactor']) / stopLossPips) / 10 * 100) / 100
-    #trade['PositionSize'] = 0.5 # lot size is in if loog of element
+    #trade['PositionSize'] = 0.5 # lot size is in if loop of element
 
 
     # calculates the take profit(s) in pips
@@ -364,10 +364,8 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
         if(trade['Entry'] == 'NOW'):
             price = await connection.get_symbol_price(symbol=trade['Symbol'])
             symspec = await connection.get_symbol_specification(symbol=trade['Symbol'])
-            #update.effective_message.reply_text(price)
-            #update.effective_message.reply_text(symspec)
-            print(price)
-            print(symspec)
+            #print(price)
+            #print(symspec)
             # uses bid price if the order type is a buy
             if(trade['OrderType'] == 'Buy'):
                 trade['Entry'] = float(price['bid'])
@@ -391,32 +389,32 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                 # executes buy market execution order
                 if(trade['OrderType'] == 'Buy'):
                     for takeProfit in trade['TP']:
-                        result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'] / len(trade['TP']), trade['StopLoss'], takeProfit)
+                        result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'] ), trade['StopLoss'], takeProfit)
 
                 # executes buy limit order
                 elif(trade['OrderType'] == 'Buy Limit'):
                     for takeProfit in trade['TP']:
-                        result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'] / len(trade['TP']), trade['Entry'], trade['StopLoss'], takeProfit)
+                        result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'] ), trade['Entry'], trade['StopLoss'], takeProfit)
 
                 # executes buy stop order
                 elif(trade['OrderType'] == 'Buy Stop'):
                     for takeProfit in trade['TP']:
-                        result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'] / len(trade['TP']), trade['Entry'], trade['StopLoss'], takeProfit)
+                        result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'] ), trade['Entry'], trade['StopLoss'], takeProfit)
 
                 # executes sell market execution order
                 elif(trade['OrderType'] == 'Sell'):
                     for takeProfit in trade['TP']:
-                        result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'] / len(trade['TP']), trade['StopLoss'], takeProfit)
+                        result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'] ), trade['StopLoss'], takeProfit)
 
                 # executes sell limit order
                 elif(trade['OrderType'] == 'Sell Limit'):
                     for takeProfit in trade['TP']:
-                        result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'] / len(trade['TP']), trade['Entry'], trade['StopLoss'], takeProfit)
+                        result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'] ), trade['Entry'], trade['StopLoss'], takeProfit)
 
                 # executes sell stop order
                 elif(trade['OrderType'] == 'Sell Stop'):
                     for takeProfit in trade['TP']:
-                        result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'] / len(trade['TP']), trade['Entry'], trade['StopLoss'], takeProfit)
+                        result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'] ), trade['Entry'], trade['StopLoss'], takeProfit)
                 
                 # sends success message to user
                 update.effective_message.reply_text("Trade entered successfully! 💰")
