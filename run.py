@@ -176,14 +176,14 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         TPposition = signal.lower().find('tp')
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
         firstTPpos = signal.lower().find(firstTP)
-        firstTPpips = signal[firstTPpos:].line()[0]
+        firstTPpips = signal[firstTPpos:].splitlines()[0]
         update.effective_message.reply_text("line after TP number")
         update.effective_message.reply_text(firstTPpips)
     else: 
         TPposition = signal.lower().find('tp1')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
         firstTPpos = signal.lower().find(firstTP)
-        firstTPpips = signal[firstTPpos:].line()[0]
+        firstTPpips = signal[firstTPpos:].splitlines()[0]
         update.effective_message.reply_text("word after TP number")
         update.effective_message.reply_text(firstTPpips)
     if(TPposition == -1):
