@@ -121,6 +121,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
+            trade['PositionSize'] = 0.5
             #update.effective_message.reply_text("in DJ30")
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
@@ -141,6 +142,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
+            trade['PositionSize'] = 0.5
         #find Nas Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
@@ -154,6 +156,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'BTCUSD'
+            trade['PositionSize'] = 0.1
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
@@ -172,9 +175,17 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(signal.lower().find('tp1') == -1):
         TPposition = signal.lower().find('tp')
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
+        firstTPpos = signal.lower().find(firstTP)
+        firstTPpips = signal[firstTPpos:].split()[0]
+        update.effective_message.reply_text("word after TP number")
+        update.effective_message.reply_text(firstTPpips)
     else: 
         TPposition = signal.lower().find('tp1')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[1]
+        firstTPpos = signal.lower().find(firstTP)
+        firstTPpips = signal[firstTPpos:].split()[0]
+        update.effective_message.reply_text("word after TP number")
+        update.effective_message.reply_text(firstTPpips)
     if(TPposition == -1):
         update.effective_message.reply_text("no TP found, TP +60 used")
     else:
@@ -244,7 +255,7 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
 
     # calculates the position size using stop loss and RISK FACTOR
     # trade['PositionSize'] = math.floor(((balance * trade['RiskFactor']) / stopLossPips) / 10 * 100) / 100
-    trade['PositionSize'] = 0.05
+    #trade['PositionSize'] = 0.5 # lot size is in if loog of element
 
 
     # calculates the take profit(s) in pips
