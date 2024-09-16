@@ -183,7 +183,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textafterfirstTP.lower()):
             firstTP = firstTP
         else:
-            firstTP = firstentry - firstTP
+            firstTP = float(firstentry) - float(firstTP)
         #update.effective_message.reply_text("line after TP number")
         #update.effective_message.reply_text(firstTPpips)
     elif(signal.lower().find('tp 1') != -1):
@@ -194,7 +194,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textafterfirstTP.lower()):
             firstTP = firstTP/10.
         else:
-            firstTP = firstentry - firstTP
+            firstTP = float(firstentry) - float(firstTP)
     else: 
         TPposition = signal.lower().find('tp')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
@@ -203,7 +203,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textafterfirstTP.lower()):
             firstTP = firstTP/10.
         else:
-            firstTP = firstentry - firstTP
+            firstTP = float(firstentry) - float(firstTP)
     if(TPposition == -1):
         update.effective_message.reply_text("no TP found, TP +60 used")
         firstTP = 60
@@ -221,7 +221,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             if('pips'.lower() in textaftersecondTP.lower()):
                 secondTP = secondTP/10.
             else:
-                secondTP = firstentry - secondTP
+                secondTP = float(firstentry) - float(secondTP)
                 
         elif(signal.lower().find('tp 2') != -1):
             TPposition2 = signal.lower()[TPposition+1:].find('tp 2')
@@ -231,7 +231,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             if('pips'.lower() in textaftersecondTP.lower()):
                 secondTP = secondTP/10.
             else:
-                secondTP = firstentry - secondTP
+                secondTP = float(firstentry) - float(secondTP)
         else: 
             TPposition2 = signal.lower()[TPposition+1:].find('tp')
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
@@ -240,7 +240,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             if('pips'.lower() in textaftersecondTP.lower()):
                 secondTP = secondTP/10.
             else:
-                secondTP = firstentry - secondTP
+                secondTP = float(firstentry) - float(secondTP)
                 
         if(TPposition2 != -1):
             update.effective_message.reply_text("TP2 = ")
@@ -264,7 +264,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textafterSL.lower()):
             stoploss = stoploss/10.
         else:
-            stoploss = firstentry - stoploss
+            stoploss = float(firstentry) - float(stoploss)
         update.effective_message.reply_text("SL = ")
         update.effective_message.reply_text(stoploss)
         trade['StopLoss'] = stoploss
