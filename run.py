@@ -199,7 +199,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         TPposition = signal.lower().find('tp')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
         firstTPpos = signal.lower().find(firstTP)
-        firstTPpips = signal[firstTPpos:].splitlines()[0]
+        textafterfirstTP = signal[firstTPpos:].splitlines()[0]
         if('pips'.lower() in textafterfirstTP.lower()):
             firstTP = firstTP/10.
         else:
