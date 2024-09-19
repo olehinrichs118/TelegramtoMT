@@ -237,7 +237,9 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             else:
                 secondTP = float(secondTP) - float(firstentry)
         else: 
-            TPposition2 = signal.lower()[TPposition+1:].find('tp')
+            TPposition2 = signal.lower()[TPposition:].find('tp')
+            update.effective_message.reply_text(TPposition)
+            update.effective_message.reply_text(TPposition2)
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
             #secondTPpos = signal.lower().find(secondTP)
             textaftersecondTP = signal[TPposition2:].splitlines()[0]
@@ -246,6 +248,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             if('pips'.lower() in textaftersecondTP.lower()):
                 secondTP = secondTP/10.
             else:
+                update.effective_message.reply_text(secondTP)
+                update.effective_message.reply_text(firstentry)
                 secondTP = float(secondTP) - float(firstentry)
                 
         if(TPposition2 != -1):
@@ -359,13 +363,14 @@ def CreateTable(trade: dict, balance: float, stopLossPips: int, takeProfitPips: 
     table.add_row(['Position Size', trade['PositionSize']])
     
     table.add_row(['\nCurrent Balance', '\n$ {:,.2f}'.format(balance)])
-    table.add_row(['Potential Loss', '$ {:,.2f}'.format(round((trade['PositionSize'] * 10) * stopLossPips, 2))])
-
+    #table.add_row(['Potential Loss', '$ {:,.2f}'.format(round((trade['PositionSize'] * 10) * stopLossPips, 2))])
+    table.add_row(['Potential Loss', '$ {:,.2f}'.format(round((trade['PositionSize'] * stopLossPips, 2))])
     # total potential profit from trade
     totalProfit = 0
 
     for count, takeProfit in enumerate(takeProfitPips):
-        profit = round((trade['PositionSize'] * 10 * (1 / len(takeProfitPips))) * takeProfit, 2)
+        #profit = round((trade['PositionSize'] * 10 * (1 / len(takeProfitPips))) * takeProfit, 2)
+        profit = round((trade['PositionSize'] * takeProfit, 2)
         table.add_row([f'TP {count + 1} Profit', '$ {:,.2f}'.format(profit)])
         
         # sums potential profit from each take profit target
