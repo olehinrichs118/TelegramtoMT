@@ -214,10 +214,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         
     #check second TP:
         if(signal.lower().find('tp2') != -1):
-            TPposition2 = signal.lower()[TPposition+1:].find('tp2')
+            TPposition2 = signal.lower().find('tp2')
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
-            secondTPpos = signal.lower().find(secondTP)
-            textaftersecondTP = signal[secondTPpos:].splitlines()[0]
+            #secondTPpos = signal.lower().find(secondTP)
+            textaftersecondTP = signal[TPposition2:].splitlines()[0]
             update.effective_message.reply_text("textaftersecondTP 1:")
             update.effective_message.reply_text(textaftersecondTP)
             if('pips'.lower() in textaftersecondTP.lower()):
@@ -226,10 +226,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 secondTP = float(secondTP) - float(firstentry)
                 
         elif(signal.lower().find('tp 2') != -1):
-            TPposition2 = signal.lower()[TPposition+1:].find('tp 2')
+            TPposition2 = signal.lower().find('tp 2')
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
-            secondTPpos = signal.lower().find(secondTP)
-            textaftersecondTP = signal[secondTPpos:].splitlines()[0]
+            #secondTPpos = signal.lower().find(secondTP)
+            textaftersecondTP = signal[TPposition2:].splitlines()[0]
             update.effective_message.reply_text("textaftersecondTP 2:")
             update.effective_message.reply_text(textaftersecondTP)
             if('pips'.lower() in textaftersecondTP.lower()):
@@ -239,8 +239,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         else: 
             TPposition2 = signal.lower()[TPposition+1:].find('tp')
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
-            secondTPpos = signal.lower().find(secondTP)
-            textaftersecondTP = signal[secondTPpos:].splitlines()[0]
+            #secondTPpos = signal.lower().find(secondTP)
+            textaftersecondTP = signal[TPposition2:].splitlines()[0]
             update.effective_message.reply_text("textaftersecondTP 3:")
             update.effective_message.reply_text(textaftersecondTP)
             if('pips'.lower() in textaftersecondTP.lower()):
