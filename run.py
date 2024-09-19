@@ -238,8 +238,9 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 secondTP = float(secondTP) - float(firstentry)
         else: 
             TPposition2 = signal.lower()[TPposition+1:].find('tp')
+            TPposition2 = TPposition2 + TPposition
             update.effective_message.reply_text(TPposition)
-            update.effective_message.reply_text(TPposition2)
+            update.effective_message.reply_text(TPposition2)  
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
             #secondTPpos = signal.lower().find(secondTP)
             textaftersecondTP = signal[TPposition2:].splitlines()[0]
