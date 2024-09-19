@@ -210,7 +210,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     else:
         update.effective_message.reply_text("TP1 = ")
         update.effective_message.reply_text(firstTP)
-        trade['TP'] = firstTP
+        trade['TP1'] = firstTP
         
     #check second TP:
         if(signal.lower().find('tp2') != -1):
@@ -245,11 +245,11 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if(TPposition2 != -1):
             update.effective_message.reply_text("TP2 = ")
             update.effective_message.reply_text(secondTP)
-            trade['TP'].append(float(secondTP))
+            trade['TP2'] = secondTP
         else: 
             update.effective_message.reply_text("no TP2 defined, use 1000 pips")
             secondTP = 100
-            trade['TP'].append(float(secondTP))
+            trade['TP2'] = secondTP
             
         
     #check SL:
@@ -310,8 +310,8 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
 
     # calculates the take profit(s) in pips
     takeProfitPips = []
-    for takeProfit in trade['TP']:
-        takeProfitPips.append(abs(round((takeProfit - trade['Entry']) / multiplier)))
+    #for takeProfit in trade['TP']:
+    takeProfitPips.append(abs(round((trade['TP1'] - trade['Entry']) / multiplier)))
     
     # creates table with trade information
     table = CreateTable(trade, balance, stopLossPips, takeProfitPips)
@@ -436,42 +436,37 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
             update.effective_message.reply_text("Entering trade on MetaTrader Account ... 👨🏾‍💻")
 
             try:
-                i = 0
-                for takeProfit in trade['TP']:
-                    trade['TP'][i] = float(trade['Entry']) + float(takeProfit)
-                    i = i+1
+                trade['TP1'] = float(trade['Entry']) + trade['TP1']
+                trade['TP2'] = float(trade['Entry']) + trade['TP2']
                 trade['StopLoss'] = float(trade['Entry']) - trade['StopLoss']
                         
                 # executes buy market execution order
                 if(trade['OrderType'] == 'Buy'):
-                    for takeProfit in trade['TP']:
-                        result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], takeProfit)
+                    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP1'])
+                    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP2'])
+                    #for takeProfit in trade['TP']:
+                    #    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], takeProfit)
 
                 # executes buy limit order
                 elif(trade['OrderType'] == 'Buy Limit'):
-                    for takeProfit in trade['TP']:
-                        result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], takeProfit)
-
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP1'])
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'])
                 # executes buy stop order
                 elif(trade['OrderType'] == 'Buy Stop'):
-                    for takeProfit in trade['TP']:
-                        result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], takeProfit)
-
+                    result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP1'])
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'])
                 # executes sell market execution order
                 elif(trade['OrderType'] == 'Sell'):
-                    for takeProfit in trade['TP']:
-                        result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], takeProfit)
-
+                    result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP1'])
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'])
                 # executes sell limit order
                 elif(trade['OrderType'] == 'Sell Limit'):
-                    for takeProfit in trade['TP']:
-                        result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], takeProfit)
-
+                    result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP1'])
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'])
                 # executes sell stop order
                 elif(trade['OrderType'] == 'Sell Stop'):
-                    for takeProfit in trade['TP']:
-                        result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], takeProfit)
-                
+                    result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP1'])
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'])
                 # sends success message to user
                 update.effective_message.reply_text("Trade entered successfully! 💰")
                 
