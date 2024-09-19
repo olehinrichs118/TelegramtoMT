@@ -237,7 +237,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             else:
                 secondTP = float(secondTP) - float(firstentry)
         else: 
-            TPposition2 = signal.lower()[TPposition:].find('tp')
+            TPposition2 = signal.lower()[TPposition+1:].find('tp')
             update.effective_message.reply_text(TPposition)
             update.effective_message.reply_text(TPposition2)
             secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
@@ -311,7 +311,7 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
         multiplier = 1
 
     # calculates the stop loss in pips
-    stopLossPips = abs(round((trade['StopLoss'] - trade['Entry']) / multiplier))
+    stopLossPips = abs(round((trade['StopLoss']) / multiplier))
 
     # calculates the position size using stop loss and RISK FACTOR
     # trade['PositionSize'] = math.floor(((balance * trade['RiskFactor']) / stopLossPips) / 10 * 100) / 100
@@ -321,7 +321,7 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
     # calculates the take profit(s) in pips
     takeProfitPips = []
     #for takeProfit in trade['TP']:
-    takeProfitPips.append(abs(round((trade['TP1'] - trade['Entry']) / multiplier)))
+    takeProfitPips.append(abs(round((trade['TP1']) / multiplier)))
     
     # creates table with trade information
     table = CreateTable(trade, balance, stopLossPips, takeProfitPips)
@@ -354,10 +354,10 @@ def CreateTable(trade: dict, balance: float, stopLossPips: int, takeProfitPips: 
     table.add_row([trade["OrderType"] , trade["Symbol"]])
     table.add_row(['Entry\n', trade['Entry']])
 
-    table.add_row(['Stop Loss', '{} pips'.format(stopLossPips)])
+    table.add_row(['Stop Loss', '{} pips'.format(stopLossPips*10)])
 
     for count, takeProfit in enumerate(takeProfitPips):
-        table.add_row([f'TP {count + 1}', f'{takeProfit} pips'])
+        table.add_row([f'TP {count + 1}', f'{takeProfit*10} pips'])
 
     #table.add_row(['\nRisk Factor', '\n{:,.0f} %'.format(trade['RiskFactor'] * 100)])
     table.add_row(['Position Size', trade['PositionSize']])
