@@ -364,13 +364,13 @@ def CreateTable(trade: dict, balance: float, stopLossPips: int, takeProfitPips: 
     
     table.add_row(['\nCurrent Balance', '\n$ {:,.2f}'.format(balance)])
     #table.add_row(['Potential Loss', '$ {:,.2f}'.format(round((trade['PositionSize'] * 10) * stopLossPips, 2))])
-    table.add_row(['Potential Loss', '$ {:,.2f}'.format(round((trade['PositionSize'] * stopLossPips, 2))])
+    table.add_row(['Potential Loss', '$ {:,.2f}'.format(round(trade['PositionSize'] * stopLossPips, 2))])
     # total potential profit from trade
     totalProfit = 0
 
     for count, takeProfit in enumerate(takeProfitPips):
         #profit = round((trade['PositionSize'] * 10 * (1 / len(takeProfitPips))) * takeProfit, 2)
-        profit = round((trade['PositionSize'] * takeProfit, 2)
+        profit = round(trade['PositionSize'] * takeProfit, 2)
         table.add_row([f'TP {count + 1} Profit', '$ {:,.2f}'.format(profit)])
         
         # sums potential profit from each take profit target
