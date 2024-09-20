@@ -191,7 +191,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         firstTPpos = signal.lower().find(firstTP)
         textafterfirstTP = signal[firstTPpos:].splitlines()[0]
         if('pips'.lower() in textafterfirstTP.lower()):
-            firstTP = firstTP
+            firstTP = float(firstTP)
         else:
             firstTP = float(firstTP) - float(firstentry)
         #update.effective_message.reply_text("line after TP number")
@@ -216,7 +216,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstTP = float(firstTP) - float(firstentry)
     else:
         update.effective_message.reply_text("no TP found, TP +60 used")
-        firstTP = 60
+        firstTP = 60.
         TPposition = 0
         
     update.effective_message.reply_text("TP1 = ")
@@ -266,7 +266,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
 
     else: 
         update.effective_message.reply_text("no TP2 defined, use 1000 pips")
-        secondTP = 100
+        secondTP = 100.
         trade['TP2'] = secondTP
 
     update.effective_message.reply_text("TP2 = ")
@@ -283,7 +283,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
         textafterSL = signal[SLposition:].splitlines()[0]
         if('pips'.lower() in textafterSL.lower()):
-            stoploss = stoploss
+            stoploss = float(stoploss)
         else:
             stoploss = float(firstentry) - float(stoploss)
         update.effective_message.reply_text("SL = ")
