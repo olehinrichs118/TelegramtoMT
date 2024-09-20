@@ -205,7 +205,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstTP = firstTP/10.
         else:
             firstTP = float(firstTP) - float(firstentry)
-    elif: 
+    elif(signal.lower().find('tp') != -1): 
         TPposition = signal.lower().find('tp')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
         firstTPpos = signal.lower().find(firstTP)
