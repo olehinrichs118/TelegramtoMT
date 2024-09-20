@@ -217,6 +217,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     else:
         update.effective_message.reply_text("no TP found, TP +60 used")
         firstTP = 60
+        TPposition = 0
         
     update.effective_message.reply_text("TP1 = ")
     update.effective_message.reply_text(firstTP)
