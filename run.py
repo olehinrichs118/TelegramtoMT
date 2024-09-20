@@ -109,12 +109,18 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     #check which Symbol:
     if('Dow'.lower() in signal.lower()):
         Entryposition = signal.lower().find('dow')
+        #find Dow Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         OrderTypeExists = True
     elif('US30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us30')
+        #find Dow Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
         OrderTypeExists = True
     elif('US 30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us 30')
+        #find Dow Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
         OrderTypeExists = True
     else: 
         Entryposition = -1        
@@ -123,21 +129,27 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['Symbol'] = 'DJ30'
             trade['PositionSize'] = 0.4
             SymbolExists = True
-            #update.effective_message.reply_text("in DJ30")
-        #find Dow Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            update.effective_message.reply_text("in DJ30")
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
 
     elif('Nasdaq'.lower() in signal.lower()):
         Entryposition = signal.lower().find('nasdaq')
+        #find Nas Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
     elif('Nas'.lower() in signal.lower()):
         Entryposition = signal.lower().find('nas')
+        #find Nas Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
     elif('US100'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us100')
+        #find Nas Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
     elif('US 100'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us 100')
+        #find Nas Entry
+        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
     else: 
         Entryposition = -1
     if(Entryposition != -1):
@@ -145,8 +157,6 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['Symbol'] = 'NAS100'
             trade['PositionSize'] = 0.4
             SymbolExists = True
-        #find Nas Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
@@ -195,7 +205,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstTP = firstTP/10.
         else:
             firstTP = float(firstTP) - float(firstentry)
-    else: 
+    elif: 
         TPposition = signal.lower().find('tp')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
         firstTPpos = signal.lower().find(firstTP)
@@ -204,64 +214,63 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstTP = firstTP/10.
         else:
             firstTP = float(firstTP) - float(firstentry)
-    if(TPposition == -1):
+    else:
         update.effective_message.reply_text("no TP found, TP +60 used")
         firstTP = 60
-    else:
-        update.effective_message.reply_text("TP1 = ")
-        update.effective_message.reply_text(firstTP)
-        trade['TP1'] = firstTP
+        
+    update.effective_message.reply_text("TP1 = ")
+    update.effective_message.reply_text(firstTP)
+    trade['TP1'] = firstTP
         
     #check second TP:
-        if(signal.lower().find('tp2') != -1):
-            TPposition2 = signal.lower().find('tp2')
-            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
-            #secondTPpos = signal.lower().find(secondTP)
-            textaftersecondTP = signal[TPposition2:].splitlines()[0]
-            update.effective_message.reply_text("textaftersecondTP 1:")
-            update.effective_message.reply_text(textaftersecondTP)
-            if('pips'.lower() in textaftersecondTP.lower()):
-                secondTP = secondTP/10.
-            else:
-                secondTP = float(secondTP) - float(firstentry)
+    if(signal.lower().find('tp2') != -1):
+        TPposition2 = signal.lower().find('tp2')
+        secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
+        #secondTPpos = signal.lower().find(secondTP)
+        textaftersecondTP = signal[TPposition2:].splitlines()[0]
+        update.effective_message.reply_text("textaftersecondTP 1:")
+        update.effective_message.reply_text(textaftersecondTP)
+        if('pips'.lower() in textaftersecondTP.lower()):
+            secondTP = secondTP/10.
+        else:
+            secondTP = float(secondTP) - float(firstentry)
                 
-        elif(signal.lower().find('tp 2') != -1):
-            TPposition2 = signal.lower().find('tp 2')
-            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
-            #secondTPpos = signal.lower().find(secondTP)
-            textaftersecondTP = signal[TPposition2:].splitlines()[0]
-            update.effective_message.reply_text("textaftersecondTP 2:")
-            update.effective_message.reply_text(textaftersecondTP)
-            if('pips'.lower() in textaftersecondTP.lower()):
-                secondTP = secondTP/10.
-            else:
-                secondTP = float(secondTP) - float(firstentry)
-        else: 
-            TPposition2 = signal.lower()[TPposition+1:].find('tp')
-            TPposition2 = TPposition2 + TPposition
-            update.effective_message.reply_text(TPposition)
-            update.effective_message.reply_text(TPposition2)  
-            secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
-            #secondTPpos = signal.lower().find(secondTP)
-            textaftersecondTP = signal[TPposition2:].splitlines()[0]
-            update.effective_message.reply_text("textaftersecondTP 3:")
-            update.effective_message.reply_text(textaftersecondTP)
-            if('pips'.lower() in textaftersecondTP.lower()):
-                secondTP = secondTP/10.
-            else:
-                update.effective_message.reply_text(secondTP)
-                update.effective_message.reply_text(firstentry)
-                secondTP = float(secondTP) - float(firstentry)
-                
-        if(TPposition2 != -1):
-            update.effective_message.reply_text("TP2 = ")
+    elif(signal.lower().find('tp 2') != -1):
+        TPposition2 = signal.lower().find('tp 2')
+        secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
+        #secondTPpos = signal.lower().find(secondTP)
+        textaftersecondTP = signal[TPposition2:].splitlines()[0]
+        update.effective_message.reply_text("textaftersecondTP 2:")
+        update.effective_message.reply_text(textaftersecondTP)
+        if('pips'.lower() in textaftersecondTP.lower()):
+            secondTP = secondTP/10.
+        else:
+            secondTP = float(secondTP) - float(firstentry)
+    elif(signal.lower()[TPposition+1:].find('tp') != -1): 
+        TPposition2 = signal.lower()[TPposition+1:].find('tp')
+        TPposition2 = TPposition2 + TPposition
+        update.effective_message.reply_text(TPposition)
+        update.effective_message.reply_text(TPposition2)  
+        secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
+        #secondTPpos = signal.lower().find(secondTP)
+        textaftersecondTP = signal[TPposition2:].splitlines()[0]
+        update.effective_message.reply_text("textaftersecondTP 3:")
+        update.effective_message.reply_text(textaftersecondTP)
+        if('pips'.lower() in textaftersecondTP.lower()):
+            secondTP = secondTP/10.
+        else:
             update.effective_message.reply_text(secondTP)
-            trade['TP2'] = secondTP
-        else: 
-            update.effective_message.reply_text("no TP2 defined, use 1000 pips")
-            secondTP = 100
-            trade['TP2'] = secondTP
-            
+            update.effective_message.reply_text(firstentry)
+            secondTP = float(secondTP) - float(firstentry)
+
+    else: 
+        update.effective_message.reply_text("no TP2 defined, use 1000 pips")
+        secondTP = 100
+        trade['TP2'] = secondTP
+
+    update.effective_message.reply_text("TP2 = ")
+    update.effective_message.reply_text(secondTP)
+    trade['TP2'] = secondTP
         
     #check SL:
     SLposition = signal.lower().find('sl')
@@ -273,7 +282,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
         textafterSL = signal[SLposition:].splitlines()[0]
         if('pips'.lower() in textafterSL.lower()):
-            stoploss = stoploss/10.
+            stoploss = stoploss
         else:
             stoploss = float(firstentry) - float(stoploss)
         update.effective_message.reply_text("SL = ")
