@@ -163,8 +163,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
 
     elif('BTCUSD'.lower() in signal.lower()):
         Entryposition = signal.lower().find('btcusd')
+        update.effective_message.reply_text("look for btc")
     else: 
         Entryposition = -1
+        update.effective_message.reply_text("btc not found")
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'BTCUSD'
