@@ -95,41 +95,42 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     elif('Buy'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
         trade['Entry'] = 'NOW'
-        update.effective_message.reply_text("in Buy")
+        #update.effective_message.reply_text("in Buy")
         OrderTypeExists = True
     elif('Sell'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
         trade['Entry'] = 'NOW'
         OrderTypeExists = True
     else:
-        update.effective_message.reply_text("no signal found")
+        OrderTypeExists = False
+        #update.effective_message.reply_text("no signal found")
         
-    update.effective_message.reply_text(trade['OrderType'])
+    #update.effective_message.reply_text(trade['OrderType'])
     
     #check which Symbol:
     if('Dow'.lower() in signal.lower()):
         Entryposition = signal.lower().find('dow')
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
-        OrderTypeExists = True
+        SymbolExists = True
     elif('US30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us30')
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
-        OrderTypeExists = True
+        SymbolExists = True
     elif('US 30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us 30')
         #find Dow Entry
         firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
-        OrderTypeExists = True
+        SymbolExists = True
     else: 
         Entryposition = -1        
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
-            trade['PositionSize'] = 0.4
+            trade['PositionSize'] = 0.2
             SymbolExists = True
-            update.effective_message.reply_text("in DJ30")
+            #update.effective_message.reply_text("in DJ30")
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
@@ -155,7 +156,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
-            trade['PositionSize'] = 0.4
+            trade['PositionSize'] = 0.2
             SymbolExists = True
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
@@ -163,10 +164,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
 
     elif('BTCUSD'.lower() in signal.lower()):
         Entryposition = signal.lower().find('btcusd')
-        update.effective_message.reply_text("look for btc")
+        #update.effective_message.reply_text("look for btc")
     else: 
         Entryposition = -1
-        update.effective_message.reply_text("btc not found")
+        #update.effective_message.reply_text("btc not found")
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'BTCUSD'
@@ -180,11 +181,11 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
     #    if(broker == 'vantage'):
     #        trade['Symbol'] = 'NAS100'
-    if(SymbolExists != True):
-        update.effective_message.reply_text("no known symbol found")
+    #if(SymbolExists != True):
+    #    update.effective_message.reply_text("no known symbol found")
 
-    update.effective_message.reply_text("Entry:")
-    update.effective_message.reply_text(firstentry)
+    #update.effective_message.reply_text("Entry:")
+    #update.effective_message.reply_text(firstentry)
     
     #check TP:
     if(signal.lower().find('tp1') != -1):
@@ -221,8 +222,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         firstTP = 60.
         TPposition = 0
         
-    update.effective_message.reply_text("TP1 = ")
-    update.effective_message.reply_text(firstTP)
+    #update.effective_message.reply_text("TP1 = ")
+    #update.effective_message.reply_text(firstTP)
     trade['TP1'] = firstTP
         
     #check second TP:
@@ -231,8 +232,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
         #secondTPpos = signal.lower().find(secondTP)
         textaftersecondTP = signal[TPposition2:].splitlines()[0]
-        update.effective_message.reply_text("textaftersecondTP 1:")
-        update.effective_message.reply_text(textaftersecondTP)
+        #update.effective_message.reply_text("textaftersecondTP 1:")
+        #update.effective_message.reply_text(textaftersecondTP)
         if('pips'.lower() in textaftersecondTP.lower()):
             secondTP = secondTP/10.
         else:
@@ -243,8 +244,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[1]
         #secondTPpos = signal.lower().find(secondTP)
         textaftersecondTP = signal[TPposition2:].splitlines()[0]
-        update.effective_message.reply_text("textaftersecondTP 2:")
-        update.effective_message.reply_text(textaftersecondTP)
+        #update.effective_message.reply_text("textaftersecondTP 2:")
+        #update.effective_message.reply_text(textaftersecondTP)
         if('pips'.lower() in textaftersecondTP.lower()):
             secondTP = secondTP/10.
         else:
@@ -252,18 +253,18 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     elif(signal.lower()[TPposition+1:].find('tp') != -1): 
         TPposition2 = signal.lower()[TPposition+1:].find('tp')
         TPposition2 = TPposition2 + TPposition
-        update.effective_message.reply_text(TPposition)
-        update.effective_message.reply_text(TPposition2)  
+        #update.effective_message.reply_text(TPposition)
+        #update.effective_message.reply_text(TPposition2)  
         secondTP = re.findall('\d+\.\d+|\d+', signal[TPposition2:])[0]
         #secondTPpos = signal.lower().find(secondTP)
         textaftersecondTP = signal[TPposition2:].splitlines()[0]
-        update.effective_message.reply_text("textaftersecondTP 3:")
-        update.effective_message.reply_text(textaftersecondTP)
+        #update.effective_message.reply_text("textaftersecondTP 3:")
+        #update.effective_message.reply_text(textaftersecondTP)
         if('pips'.lower() in textaftersecondTP.lower()):
             secondTP = secondTP/10.
         else:
-            update.effective_message.reply_text(secondTP)
-            update.effective_message.reply_text(firstentry)
+            #update.effective_message.reply_text(secondTP)
+            #update.effective_message.reply_text(firstentry)
             secondTP = float(secondTP) - float(firstentry)
 
     else: 
@@ -271,16 +272,16 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         secondTP = 100.
         trade['TP2'] = secondTP
 
-    update.effective_message.reply_text("TP2 = ")
-    update.effective_message.reply_text(secondTP)
+    #update.effective_message.reply_text("TP2 = ")
+    #update.effective_message.reply_text(secondTP)
     trade['TP2'] = secondTP
         
     #check SL:
     SLposition = signal.lower().find('sl')
     #update.effective_message.reply_text(SLposition)
     if(SLposition == -1):
-        update.effective_message.reply_text("No SL, use 800 pips")
-        trade['StopLoss'] = 80.
+        update.effective_message.reply_text("No SL, use 350 pips")
+        trade['StopLoss'] = 35.
     else:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
         textafterSL = signal[SLposition:].splitlines()[0]
@@ -293,7 +294,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         trade['StopLoss'] = stoploss
     
     #update.effective_message.reply_text("You entered that message:")
-    update.effective_message.reply_text(trade)
+    #update.effective_message.reply_text(trade)
 
     #check, if everthing is there
     if(OrderTypeExists != True or SymbolExists != True):
@@ -515,7 +516,7 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
         update: update from Telegram
         context: CallbackContext object that stores commonly used objects in handler callbacks
     """
-    update.effective_message.reply_text("in SendTrade")
+    #update.effective_message.reply_text("in SendTrade")
     #update.effective_message.reply_text(context.user_data['trade'])
     # checks if the trade has already been parsed or not
     if(context.user_data['trade'] == None):
@@ -526,8 +527,8 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
             trade = ParseSignal(update, context)
             
             # checks if there was an issue with parsing the trade
-            #if(not(trade)):
-            #    raise Exception('Invalid Trade')
+            if(not(trade)):
+                raise Exception('No Trade')
 
             # sets the user context trade equal to the parsed trade
             context.user_data['trade'] = trade
@@ -644,7 +645,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     update.effective_message.reply_text("in unknown")
     context.user_data['trade'] = None
     SendTrade(update, context)
-    update.effective_message.reply_text("trade placed")
+    #update.effective_message.reply_text("trade placed")
     
     return
 
