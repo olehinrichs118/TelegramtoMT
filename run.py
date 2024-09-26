@@ -173,7 +173,11 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['Symbol'] = 'BTCUSD'
             trade['PositionSize'] = 0.1
             SymbolExists = True
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            try:
+                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            except:
+                update.effective_message.reply_text("no Entry found")
+                
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
