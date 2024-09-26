@@ -532,6 +532,7 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
                 update.effective_message.reply_text("ignore message")
             else:
                 # sets the user context trade equal to the parsed trade
+                update.effective_message.reply_text(trade)
                 context.user_data['trade'] = trade
                 update.effective_message.reply_text("Trade Successfully Parsed! 🥳\nConnecting to MetaTrader ... \n(May take a while) ⏰")
         
