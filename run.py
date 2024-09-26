@@ -218,7 +218,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         else:
             firstTP = float(firstTP) - float(firstentry)
     else:
-        update.effective_message.reply_text("no TP found, TP +60 used")
+        #update.effective_message.reply_text("no TP found, TP +60 used")
         firstTP = 60.
         TPposition = 0
         
@@ -268,7 +268,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             secondTP = float(secondTP) - float(firstentry)
 
     else: 
-        update.effective_message.reply_text("no TP2 defined, use 1000 pips")
+        #update.effective_message.reply_text("no TP2 defined, use 1000 pips")
         secondTP = 100.
         trade['TP2'] = secondTP
 
@@ -280,7 +280,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     SLposition = signal.lower().find('sl')
     #update.effective_message.reply_text(SLposition)
     if(SLposition == -1):
-        update.effective_message.reply_text("No SL, use 350 pips")
+        #update.effective_message.reply_text("No SL, use 350 pips")
         trade['StopLoss'] = 35.
     else:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
@@ -289,8 +289,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             stoploss = float(stoploss)
         else:
             stoploss = float(firstentry) - float(stoploss)
-        update.effective_message.reply_text("SL = ")
-        update.effective_message.reply_text(stoploss)
+        #update.effective_message.reply_text("SL = ")
+        #update.effective_message.reply_text(stoploss)
         trade['StopLoss'] = stoploss
     
     #update.effective_message.reply_text("You entered that message:")
@@ -520,19 +520,20 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
     #update.effective_message.reply_text(context.user_data['trade'])
     # checks if the trade has already been parsed or not
     if(context.user_data['trade'] == None):
-        update.effective_message.reply_text("trade is None")
+        #update.effective_message.reply_text("trade is None")
         try: 
             # parses signal from Telegram message
-            update.effective_message.reply_text("try parsing")
+            #update.effective_message.reply_text("try parsing")
             trade = ParseSignal(update, context)
             
             # checks if there was an issue with parsing the trade
             if(not(trade)):
-                raise Exception('No Trade')
-
-            # sets the user context trade equal to the parsed trade
-            context.user_data['trade'] = trade
-            update.effective_message.reply_text("Trade Successfully Parsed! 🥳\nConnecting to MetaTrader ... \n(May take a while) ⏰")
+                #raise Exception('No Trade')
+                update.effective_message.reply_text("ignore message")
+            else:
+                # sets the user context trade equal to the parsed trade
+                context.user_data['trade'] = trade
+                update.effective_message.reply_text("Trade Successfully Parsed! 🥳\nConnecting to MetaTrader ... \n(May take a while) ⏰")
         
         except Exception as error:
             logger.error(f'Error: {error}')
@@ -543,12 +544,12 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
             return TRADE
     else:
         update.effective_message.reply_text("context.user_data['trade'] is not None")
-    
-    # attempts connection to MetaTrader and places trade
-    asyncio.run(ConnectMetaTrader(update, context.user_data['trade'], True))
-    
-    # removes trade from user context data
-    context.user_data['trade'] = None
+
+    if(context.user_data['trade'] != None):
+        # attempts connection to MetaTrader and places trade
+        asyncio.run(ConnectMetaTrader(update, context.user_data['trade'], True))
+        # removes trade from user context data
+        context.user_data['trade'] = None
 
     return
 
@@ -642,7 +643,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         update.effective_message.reply_text("You are not authorized to use this bot! 🙅🏽‍♂️")
         return  
 
-    update.effective_message.reply_text("in unknown")
+    #update.effective_message.reply_text("in unknown")
     context.user_data['trade'] = None
     SendTrade(update, context)
     #update.effective_message.reply_text("trade placed")
