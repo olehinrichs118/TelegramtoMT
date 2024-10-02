@@ -527,6 +527,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                 if(trade['OrderType'] == 'Buy'):
                     trade['TP1'] = float(trade['Entry']) + trade['TP1']
                     trade['TP2'] = float(trade['Entry']) + trade['TP2']
+                    trade['TP3'] = float(trade['Entry']) + trade['TP3']
                     trade['StopLoss'] = float(trade['Entry']) - trade['StopLoss']
                     result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
@@ -540,7 +541,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                     result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
                             'distance': 400,
-                            'units': 'RELATIVE_POINTS'}}}) 
+                            'units': 'RELATIVE_PRICE'}}}) 
                     #for takeProfit in trade['TP']:
                     #    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], takeProfit)
 
