@@ -109,6 +109,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     #update.effective_message.reply_text(trade['OrderType'])
     #find Position of TP as upper limit for entry:
     Upperpositionlimit = signal.lower().find('tp')
+    update.effective_message.reply_text("Upperpositionlimit")
+    update.effective_message.reply_text(Upperpositionlimit)
     if(Upperpositionlimit != -1):
         #no TP found, use SL as upper limit for entry
         Upperpositionlimit = signal.lower().find('sl')
