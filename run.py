@@ -107,13 +107,24 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         #update.effective_message.reply_text("no signal found")
         
     #update.effective_message.reply_text(trade['OrderType'])
+    #find Position of TP as upper limit for entry:
+    Upperpositionlimit = signal.lower().find('tp')
+    if(Upperpositionlimit != -1):
+        #no TP found, use SL as upper limit for entry
+        Upperpositionlimit = signal.lower().find('sl')
+        if(Upperpositionlimit != -1):
+            update.effective_message.reply_text("no TP and SL found")
+        else:
+            update.effective_message.reply_text("SL used as upper position limit")
+    else:
+        update.effective_message.reply_text("TP used as upper position limit")
     
     #check which Symbol:
     if('Dow'.lower() in signal.lower()):
         Entryposition = signal.lower().find('dow')
         #find Dow Entry
         try:
-            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
             EntryExists = True
         except:
             update.effective_message.reply_text("no Entry found")
@@ -122,7 +133,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('us30')
         #find Dow Entry
         try:
-            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
             EntryExists = True
         except:
             update.effective_message.reply_text("no Entry found")
@@ -131,7 +142,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('us 30')
         #find Dow Entry
         try:
-            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
             EntryExists = True
         except:
             update.effective_message.reply_text("no Entry found")
@@ -152,7 +163,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('nasdaq')
         #find Nas Entry
         try:
-            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
             EntryExists = True
         except:
             update.effective_message.reply_text("no Entry found")
@@ -161,7 +172,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('nas100')
         #find Nas Entry
         try:
-            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
             EntryExists = True
         except:
             update.effective_message.reply_text("no Entry found")
@@ -170,7 +181,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('nas')
         #find Nas Entry
         try:
-            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
             EntryExists = True
         except:
             update.effective_message.reply_text("no Entry found")
@@ -179,7 +190,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('us100')
         #find Nas Entry
         try:
-            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
             EntryExists = True
         except:
             update.effective_message.reply_text("no Entry found")
@@ -188,7 +199,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = signal.lower().find('us 100')
         #find Nas Entry
         try:
-            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
             EntryExists = True
         except:
             update.effective_message.reply_text("no Entry found")
@@ -216,7 +227,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['PositionSize'] = 0.1
             SymbolExists = True
             try:
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
                 EntryExists = True
             except:
                 update.effective_message.reply_text("no Entry found")
