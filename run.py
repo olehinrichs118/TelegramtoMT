@@ -256,7 +256,11 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textafterfirstTP.lower()):
             firstTP = float(firstTP)
         else:
-            firstTP = float(firstTP) - float(firstentry)
+            try:
+                firstTP = float(firstTP) - float(firstentry)
+            except:
+                update.effective_message.reply_text("no Entry found to substract")
+                
         #update.effective_message.reply_text("line after TP number")
         #update.effective_message.reply_text(firstTPpips)
     elif(signal.lower().find('tp 1') != -1):
@@ -267,7 +271,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textafterfirstTP.lower()):
             firstTP = firstTP/10.
         else:
-            firstTP = float(firstTP) - float(firstentry)
+            try:
+                firstTP = float(firstTP) - float(firstentry)
+            except:
+                update.effective_message.reply_text("no Entry found to substract")
     elif(signal.lower().find('tp') != -1): 
         TPposition = signal.lower().find('tp')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
@@ -276,7 +283,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textafterfirstTP.lower()):
             firstTP = firstTP/10.
         else:
-            firstTP = float(firstTP) - float(firstentry)
+            try:
+                firstTP = float(firstTP) - float(firstentry)
+            except:
+                update.effective_message.reply_text("no Entry found to substract")
     else:
         #update.effective_message.reply_text("no TP found, TP +50 used")
         firstTP = 50.
@@ -297,7 +307,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textaftersecondTP.lower()):
             secondTP = secondTP/10.
         else:
-            secondTP = float(secondTP) - float(firstentry)
+            try:
+                secondTP = float(secondTP) - float(firstentry)
+            except:
+                update.effective_message.reply_text("no Entry found to substract")
                 
     elif(signal.lower().find('tp 2') != -1):
         TPposition2 = signal.lower().find('tp 2')
@@ -309,7 +322,11 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textaftersecondTP.lower()):
             secondTP = secondTP/10.
         else:
-            secondTP = float(secondTP) - float(firstentry)
+            try:
+                secondTP = float(secondTP) - float(firstentry)
+            except:
+                update.effective_message.reply_text("no Entry found to substract")
+                
     elif(signal.lower()[TPposition+1:].find('tp') != -1): 
         TPposition2 = signal.lower()[TPposition+1:].find('tp')
         TPposition2 = TPposition2 + TPposition
@@ -325,7 +342,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         else:
             #update.effective_message.reply_text(secondTP)
             #update.effective_message.reply_text(firstentry)
-            secondTP = float(secondTP) - float(firstentry)
+            try:
+                secondTP = float(secondTP) - float(firstentry)
+            except:
+                update.effective_message.reply_text("no Entry found to substract")
 
     else: 
         #update.effective_message.reply_text("no TP2 defined, TP +100 used")
@@ -350,7 +370,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if('pips'.lower() in textafterSL.lower()):
             stoploss = float(stoploss)
         else:
-            stoploss = float(firstentry) - float(stoploss)
+            try:
+                stoploss = float(firstentry) - float(stoploss)
+            except:
+                update.effective_message.reply_text("no Entry found to substract")
         #update.effective_message.reply_text("SL = ")
         #update.effective_message.reply_text(stoploss)
         trade['StopLoss'] = stoploss
