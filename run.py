@@ -66,6 +66,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     OrderLater = False
     OrderTypeExists = False
     SymbolExists = False
+    EntryExists = False
     
     #for line in signal.splitlines():
      #   if len(line.strip()) == 0 :
@@ -111,17 +112,29 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if('Dow'.lower() in signal.lower()):
         Entryposition = signal.lower().find('dow')
         #find Dow Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+        try:
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            EntryExists = True
+        except:
+            update.effective_message.reply_text("no Entry found")
         SymbolExists = True
     elif('US30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us30')
         #find Dow Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+        try:
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            EntryExists = True
+        except:
+            update.effective_message.reply_text("no Entry found")
         SymbolExists = True
     elif('US 30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us 30')
         #find Dow Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+        try:
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            EntryExists = True
+        except:
+            update.effective_message.reply_text("no Entry found")
         SymbolExists = True
     else: 
         Entryposition = -1        
@@ -129,7 +142,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
             trade['PositionSize'] = 0.2
-            SymbolExists = True
+            #SymbolExists = True
             #update.effective_message.reply_text("in DJ30")
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
@@ -138,26 +151,55 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     elif('Nasdaq'.lower() in signal.lower()):
         Entryposition = signal.lower().find('nasdaq')
         #find Nas Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+        try:
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            EntryExists = True
+        except:
+            update.effective_message.reply_text("no Entry found")
+        SymbolExists = True
+    elif('Nas100'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('nas100')
+        #find Nas Entry
+        try:
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            EntryExists = True
+        except:
+            update.effective_message.reply_text("no Entry found")
+        SymbolExists = True
     elif('Nas'.lower() in signal.lower()):
         Entryposition = signal.lower().find('nas')
         #find Nas Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+        try:
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+            EntryExists = True
+        except:
+            update.effective_message.reply_text("no Entry found")
+        SymbolExists = True
     elif('US100'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us100')
         #find Nas Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+        try:
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            EntryExists = True
+        except:
+            update.effective_message.reply_text("no Entry found")
+        SymbolExists = True
     elif('US 100'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us 100')
         #find Nas Entry
-        firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+        try:
+            firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
+            EntryExists = True
+        except:
+            update.effective_message.reply_text("no Entry found")
+        SymbolExists = True
     else: 
         Entryposition = -1
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
             trade['PositionSize'] = 0.2
-            SymbolExists = True
+            #SymbolExists = True
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
@@ -175,6 +217,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             SymbolExists = True
             try:
                 firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
+                EntryExists = True
             except:
                 update.effective_message.reply_text("no Entry found")
                 
@@ -222,8 +265,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         else:
             firstTP = float(firstTP) - float(firstentry)
     else:
-        #update.effective_message.reply_text("no TP found, TP +60 used")
-        firstTP = 60.
+        #update.effective_message.reply_text("no TP found, TP +50 used")
+        firstTP = 50.
         TPposition = 0
         
     #update.effective_message.reply_text("TP1 = ")
@@ -272,20 +315,22 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             secondTP = float(secondTP) - float(firstentry)
 
     else: 
-        #update.effective_message.reply_text("no TP2 defined, use 1000 pips")
+        #update.effective_message.reply_text("no TP2 defined, TP +100 used")
         secondTP = 100.
         trade['TP2'] = secondTP
 
     #update.effective_message.reply_text("TP2 = ")
     #update.effective_message.reply_text(secondTP)
     trade['TP2'] = secondTP
+    #TP3 runner with trailing SL
+    trade['TP3'] = 200.
         
     #check SL:
     SLposition = signal.lower().find('sl')
     #update.effective_message.reply_text(SLposition)
     if(SLposition == -1):
-        #update.effective_message.reply_text("No SL, use 350 pips")
-        trade['StopLoss'] = 35.
+        #update.effective_message.reply_text("No SL, use -40")
+        trade['StopLoss'] = 40.
     else:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
         textafterSL = signal[SLposition:].splitlines()[0]
@@ -340,6 +385,7 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
     takeProfitPips = []
     #for takeProfit in trade['TP']:
     takeProfitPips.append(abs(round((trade['TP1']) / multiplier)))
+    takeProfitPips.append(abs(round((trade['TP2']) / multiplier)))
     
     # creates table with trade information
     table = CreateTable(trade, balance, stopLossPips, takeProfitPips)
@@ -472,17 +518,18 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                     trade['TP2'] = float(trade['Entry']) + trade['TP2']
                     trade['StopLoss'] = float(trade['Entry']) - trade['StopLoss']
                     result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP1'], {
-                    'trailingStopLoss': {'threshold': {'thresholds': [
-                    {
-                    'threshold': (trade['Entry']+40),
-                    'stopLoss': (trade['Entry']+5)
-                    }],
-                    'units': 'ABSOLUTE_PRICE',
-                    'stopPriceBase': 'OPEN_PRICE'
-                    }
-                    }
-                    })
-                    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP2'])
+                        'trailingStopLoss': {'threshold': {'thresholds': [{
+                            'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
+                            'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
+                    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP2'], {
+                        'trailingStopLoss': {'threshold': {'thresholds': [{
+                            'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
+                            'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
+                    #runner:
+                    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
+                    'trailingStopLoss': {'distance':{
+                        'distance': 40,
+                        'units': 'RELATIVE_PRICE'}}}) 
                     #for takeProfit in trade['TP']:
                     #    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], takeProfit)
 
