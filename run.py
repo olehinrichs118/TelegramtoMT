@@ -111,10 +111,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     Upperpositionlimit = signal.lower().find('tp')
     update.effective_message.reply_text("Upperpositionlimit")
     update.effective_message.reply_text(Upperpositionlimit)
-    if(Upperpositionlimit != -1):
+    if(Upperpositionlimit == -1):
         #no TP found, use SL as upper limit for entry
         Upperpositionlimit = signal.lower().find('sl')
-        if(Upperpositionlimit != -1):
+        if(Upperpositionlimit == -1):
             update.effective_message.reply_text("no TP and SL found")
         else:
             update.effective_message.reply_text("SL used as upper position limit")
