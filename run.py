@@ -526,10 +526,10 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                             'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     #runner:
-                    #result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
-                    #    'trailingStopLoss': {'distance':{
-                    #        'distance': 40,
-                    #        'units': 'RELATIVE_PRICE'}}}) 
+                    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
+                        'trailingStopLoss': {'distance':{
+                            'distance': 40,
+                            'units': 'RELATIVE_PRICE'}}}) 
                     #for takeProfit in trade['TP']:
                     #    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], takeProfit)
 
