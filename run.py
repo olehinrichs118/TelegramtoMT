@@ -567,7 +567,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                     #runner:
                     result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
-                            'distance': 10,
+                            'distance': 40,
                             'units': 'RELATIVE_PRICE'}}}) 
                     #for takeProfit in trade['TP']:
                     #    result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], takeProfit)
@@ -588,7 +588,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
-                            'distance': 400,
+                            'distance': 40,
                             'units': 'RELATIVE_PRICE'}}}) 
                 # executes buy stop order
                 elif(trade['OrderType'] == 'Buy Stop'):
@@ -606,7 +606,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
-                            'distance': 400,
+                            'distance': 40,
                             'units': 'RELATIVE_PRICE'}}})
                 # executes sell market execution order
                 elif(trade['OrderType'] == 'Sell'):
@@ -624,7 +624,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
-                            'distance': 400,
+                            'distance': 40,
                             'units': 'RELATIVE_PRICE'}}})
                 # executes sell limit order
                 elif(trade['OrderType'] == 'Sell Limit'):
@@ -642,7 +642,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
-                            'distance': 400,
+                            'distance': 40,
                             'units': 'RELATIVE_PRICE'}}})
                 # executes sell stop order
                 elif(trade['OrderType'] == 'Sell Stop'):
@@ -660,7 +660,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
-                            'distance': 400,
+                            'distance': 40,
                             'units': 'RELATIVE_PRICE'}}})
                 # sends success message to user
                 update.effective_message.reply_text("Trade entered successfully! 💰")
