@@ -103,8 +103,9 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         trade['Entry'] = 'NOW'
         OrderTypeExists = True
     else:
-        OrderTypeExists = False
-        #update.effective_message.reply_text("no signal found")
+        #OrderTypeExists = False
+        return {}
+        update.effective_message.reply_text("no signal found")
         
     #update.effective_message.reply_text(trade['OrderType'])
     #find Position of TP as upper limit for entry:
@@ -116,10 +117,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Upperpositionlimit = signal.lower().find('sl')
         if(Upperpositionlimit == -1):
             update.effective_message.reply_text("no TP and SL found")
-        else:
-            update.effective_message.reply_text("SL used as upper position limit")
-    else:
-        update.effective_message.reply_text("TP used as upper position limit")
+        #else:
+        #    update.effective_message.reply_text("SL used as upper position limit")
+    #else:
+     #   update.effective_message.reply_text("TP used as upper position limit")
     
     #check which Symbol:
     if('Dow'.lower() in signal.lower()):
@@ -237,6 +238,10 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
+
+    if(SymbolExists == False):
+        update.effective_message.reply_text("no Symbol found, ignore")
+        return {}
         
     #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
     #    if(broker == 'vantage'):
@@ -380,10 +385,6 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     
     #update.effective_message.reply_text("You entered that message:")
     #update.effective_message.reply_text(trade)
-
-    #check, if everthing is there
-    if(OrderTypeExists != True or SymbolExists != True):
-        trade = {}
 
     return trade
 
@@ -814,8 +815,12 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         return  
 
     #update.effective_message.reply_text("in unknown")
+    signal = update.effective_message.text
     context.user_data['trade'] = None
-    SendTrade(update, context)
+    if('Buy'.lower() in signal.lower() or 'Sell'.lower() in signal.lower()):
+        SendTrade(update, context)
+    else:
+        update.effective_message.reply_text("ignore message")
     #update.effective_message.reply_text("trade placed")
     
     return
