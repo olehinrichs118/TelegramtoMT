@@ -67,6 +67,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     OrderTypeExists = False
     SymbolExists = False
     EntryExists = False
+    EntryFound = True
     
     #for line in signal.splitlines():
      #   if len(line.strip()) == 0 :
@@ -131,7 +132,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
             EntryExists = True
         except:
-            update.effective_message.reply_text("no Entry found")
+            #update.effective_message.reply_text("no Entry found")
+            EntryFound = False
         SymbolExists = True
     elif('US30'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us30')
@@ -149,7 +151,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
             EntryExists = True
         except:
-            update.effective_message.reply_text("no Entry found")
+            #update.effective_message.reply_text("no Entry found")
+            EntryFound = False
         SymbolExists = True
     else: 
         Entryposition = -1        
@@ -171,6 +174,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             EntryExists = True
         except:
             #update.effective_message.reply_text("no Entry found")
+            EntryFound = False
         SymbolExists = True
     elif('Nas100'.lower() in signal.lower()):
         Entryposition = signal.lower().find('nas100')
@@ -180,6 +184,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             EntryExists = True
         except:
             #update.effective_message.reply_text("no Entry found")
+            EntryFound = False
         SymbolExists = True
     elif('Nas'.lower() in signal.lower()):
         Entryposition = signal.lower().find('nas')
@@ -189,6 +194,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             EntryExists = True
         except:
             #update.effective_message.reply_text("no Entry found")
+            EntryFound = False
         SymbolExists = True
     elif('US100'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us100')
@@ -198,6 +204,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             EntryExists = True
         except:
             #update.effective_message.reply_text("no Entry found")
+            EntryFound = False
         SymbolExists = True
     elif('US 100'.lower() in signal.lower()):
         Entryposition = signal.lower().find('us 100')
@@ -207,6 +214,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             EntryExists = True
         except:
             #update.effective_message.reply_text("no Entry found")
+            EntryFound = False
         SymbolExists = True
     else: 
         Entryposition = -1
@@ -235,6 +243,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 EntryExists = True
             except:
                 #update.effective_message.reply_text("no Entry found")
+                EntryFound = False
                 
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
@@ -266,6 +275,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 firstTP = float(firstTP) - float(firstentry)
             except:
                 update.effective_message.reply_text("no Entry found to substract")
+                EntryFound = False
                 
         #update.effective_message.reply_text("line after TP number")
         #update.effective_message.reply_text(firstTPpips)
@@ -281,6 +291,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 firstTP = float(firstTP) - float(firstentry)
             except:
                 update.effective_message.reply_text("no Entry found to substract")
+                EntryFound = False
     elif(signal.lower().find('tp') != -1): 
         TPposition = signal.lower().find('tp')  
         firstTP = re.findall('\d+\.\d+|\d+', signal[TPposition:])[0]
@@ -293,6 +304,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 firstTP = float(firstTP) - float(firstentry)
             except:
                 update.effective_message.reply_text("no Entry found to substract")
+                EntryFound = False
     else:
         #update.effective_message.reply_text("no TP found, TP +50 used")
         firstTP = 50.
@@ -317,6 +329,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 secondTP = float(secondTP) - float(firstentry)
             except:
                 update.effective_message.reply_text("no Entry found to substract")
+                EntryFound = False
                 
     elif(signal.lower().find('tp 2') != -1):
         TPposition2 = signal.lower().find('tp 2')
@@ -332,6 +345,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 secondTP = float(secondTP) - float(firstentry)
             except:
                 update.effective_message.reply_text("no Entry found to substract")
+                EntryFound = False
                 
     elif(signal.lower()[TPposition+1:].find('tp') != -1): 
         TPposition2 = signal.lower()[TPposition+1:].find('tp')
@@ -352,6 +366,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 secondTP = float(secondTP) - float(firstentry)
             except:
                 update.effective_message.reply_text("no Entry found to substract")
+                EntryFound = False
 
     else: 
         #update.effective_message.reply_text("no TP2 defined, TP +100 used")
@@ -380,6 +395,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 stoploss = float(firstentry) - float(stoploss)
             except:
                 update.effective_message.reply_text("no Entry found to substract")
+                EntryFound = False
         #update.effective_message.reply_text("SL = ")
         #update.effective_message.reply_text(stoploss)
         trade['StopLoss'] = stoploss
