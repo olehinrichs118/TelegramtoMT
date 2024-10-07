@@ -417,7 +417,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
         textafterSL = signal[SLposition:].splitlines()[0]
         if('pips'.lower() in textafterSL.lower()):
-            stoploss = float(stoploss)
+            stoploss = float(stoploss)/10.
         else:
             try:
                 stoploss = float(firstentry) - float(stoploss)
