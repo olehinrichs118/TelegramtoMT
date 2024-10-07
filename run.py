@@ -159,7 +159,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'DJ30'
-            trade['PositionSize'] = 0.2
+            trade['PositionSize'] = 0.02
             #SymbolExists = True
             #update.effective_message.reply_text("in DJ30")
         if(OrderLater == True):
@@ -221,7 +221,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
-            trade['PositionSize'] = 0.2
+            trade['PositionSize'] = 0.02
             #SymbolExists = True
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
@@ -236,7 +236,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'vantage'):
             trade['Symbol'] = 'BTCUSD'
-            trade['PositionSize'] = 0.1
+            trade['PositionSize'] = 0.01
             SymbolExists = True
             try:
                 firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
