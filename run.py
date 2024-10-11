@@ -412,7 +412,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     #update.effective_message.reply_text(secondTP)
     trade['TP2'] = secondTP
     #TP3 runner with trailing SL
-    trade['TP3'] = 200.
+    trade['TP3'] = 500.
         
     #check SL:
     SLposition = signal.lower().find('sl')
@@ -674,10 +674,10 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                         'trailingStopLoss': {'threshold': {'thresholds': [{
                             'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    #result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
-                    #    'trailingStopLoss': {'distance': {
-                    #        'distance': 40,
-                     #       'units': 'RELATIVE_PRICE'}}})
+                    result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
+                        'trailingStopLoss': {'distance': {
+                            'distance': 40,
+                            'units': 'RELATIVE_PRICE'}}})
                 # executes sell limit order
                 elif(trade['OrderType'] == 'Sell Limit'):
                     trade['TP1'] = float(trade['Entry']) - trade['TP1']
