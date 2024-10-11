@@ -670,10 +670,10 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                         'trailingStopLoss': {'threshold': {'thresholds': [{
                             'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    #result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'], {
-                    #    'trailingStopLoss': {'threshold': {'thresholds': [{
-                    #        'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
-                    #        'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
+                    result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP2'], {
+                        'trailingStopLoss': {'threshold': {'thresholds': [{
+                            'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
+                            'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     #result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
                     #    'trailingStopLoss': {'distance': {
                     #        'distance': 40,
