@@ -43,9 +43,6 @@ SYMBOLS = ['AUDCAD', 'AUDCHF', 'AUDJPY', 'AUDNZD', 'AUDUSD', 'BTCUSD', 'CADCHF',
 # RISK FACTOR
 RISK_FACTOR = float(os.environ.get("RISK_FACTOR"))
 
-#Flag for Mode Trading or not
-TRADINGISON = True
-
 # Helper Functions
 def ParseSignal(update: Update, context: CallbackContext) -> dict:
     """Starts process of parsing signal and entering trade on MetaTrader account.
