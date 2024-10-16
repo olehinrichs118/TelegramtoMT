@@ -874,10 +874,11 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     if(not(update.effective_message.chat.username == TELEGRAM_USER)):
         update.effective_message.reply_text("You are not authorized to use this bot! 🙅🏽‍♂️")
         return  
-    
-    if(context.user_data['trademodeon'] == False):
-        update.effective_message.reply_text("trading is offline")
-        return
+
+    try:
+        if(context.user_data['trademodeon'] == False):
+            update.effective_message.reply_text("trading is offline")
+            return
     
     #update.effective_message.reply_text("in unknown")
     signal = update.effective_message.text
