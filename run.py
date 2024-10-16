@@ -881,7 +881,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     update.effective_message.reply_text("TRADINGISON")
     update.effective_message.reply_text(context.user_data['trade'])
     
-    if(Tcontext.user_data['trademodeon'] == False):
+    if(context.user_data['trademodeon'] == False):
         update.effective_message.reply_text("trading is offline")
         return
     
