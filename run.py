@@ -874,9 +874,6 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     if(not(update.effective_message.chat.username == TELEGRAM_USER)):
         update.effective_message.reply_text("You are not authorized to use this bot! 🙅🏽‍♂️")
         return  
-
-    update.effective_message.reply_text("TRADINGISON")
-    update.effective_message.reply_text(context.user_data['trade'])
     
     if(context.user_data['trademodeon'] == False):
         update.effective_message.reply_text("trading is offline")
@@ -945,7 +942,7 @@ def on(update: Update, context: CallbackContext) -> None:
     # sends messages to user
     update.effective_message.reply_text("Trading activated")
 
-    return
+    return TRADINGISON
 
 def off(update: Update, context: CallbackContext) -> None:
     """Activates trading
@@ -1063,7 +1060,6 @@ def main() -> None:
 
     # message handler for all messages that are not included in conversation handler
     dp.add_handler(MessageHandler(Filters.text, unknown_command))
-    #dp.add_handler(MessageHandler(Filters.text, SendTrade))
     
     # log all errors
     dp.add_error_handler(error)
