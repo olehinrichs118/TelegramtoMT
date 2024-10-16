@@ -992,6 +992,7 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
     if(context.user_data['trade'] != None):
         # attempts connection to MetaTrader and places trade
         asyncio.run(ConnectMetaTrader(update, context.user_data['trade'], True))
+        asyncio.run(ConnectMetaTrader2(update, context.user_data['trade'], True))
         # removes trade from user context data
         context.user_data['trade'] = None
 
