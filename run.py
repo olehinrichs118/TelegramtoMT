@@ -960,7 +960,7 @@ def off(update: Update, context: CallbackContext) -> None:
     # sends messages to user
     update.effective_message.reply_text("Trading deactivated")
 
-    return False
+    return
 
 def cancel(update: Update, context: CallbackContext) -> int:
     """Cancels and ends the conversation.   
@@ -1030,7 +1030,6 @@ def Calculation_Command(update: Update, context: CallbackContext) -> int:
 
 def main() -> None:
     """Runs the Telegram bot."""
-    context.user_data['trademodeon'] = False
     
     updater = Updater(TOKEN, use_context=True)
 
