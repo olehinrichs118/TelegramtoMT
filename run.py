@@ -43,6 +43,8 @@ SYMBOLS = ['AUDCAD', 'AUDCHF', 'AUDJPY', 'AUDNZD', 'AUDUSD', 'BTCUSD', 'CADCHF',
 # RISK FACTOR
 RISK_FACTOR = float(os.environ.get("RISK_FACTOR"))
 
+#Flag for Mode Trading or not
+TRADINGISON = True
 
 # Helper Functions
 def ParseSignal(update: Update, context: CallbackContext) -> dict:
@@ -307,7 +309,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstTP = float(firstTP)
         else:
             try:
-                firstTP = float(firstTP) - float(firstentry)
+                firstTP = abs(float(firstTP) - float(firstentry))
             except:
                 update.effective_message.reply_text("no Entry found to substract")
                 EntryFound = False
@@ -323,7 +325,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstTP = firstTP/10.
         else:
             try:
-                firstTP = float(firstTP) - float(firstentry)
+                firstTP = abs(float(firstTP) - float(firstentry))
             except:
                 update.effective_message.reply_text("no Entry found to substract")
                 EntryFound = False
@@ -336,7 +338,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             firstTP = firstTP/10.
         else:
             try:
-                firstTP = float(firstTP) - float(firstentry)
+                firstTP = abs(float(firstTP) - float(firstentry))
             except:
                 update.effective_message.reply_text("no Entry found to substract")
                 EntryFound = False
@@ -361,7 +363,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             secondTP = secondTP/10.
         else:
             try:
-                secondTP = float(secondTP) - float(firstentry)
+                secondTP = abs(float(secondTP) - float(firstentry))
             except:
                 update.effective_message.reply_text("no Entry found to substract")
                 EntryFound = False
@@ -377,7 +379,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             secondTP = secondTP/10.
         else:
             try:
-                secondTP = float(secondTP) - float(firstentry)
+                secondTP = abs(float(secondTP) - float(firstentry))
             except:
                 update.effective_message.reply_text("no Entry found to substract")
                 EntryFound = False
@@ -398,7 +400,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             #update.effective_message.reply_text(secondTP)
             #update.effective_message.reply_text(firstentry)
             try:
-                secondTP = float(secondTP) - float(firstentry)
+                secondTP = abs(float(secondTP) - float(firstentry))
             except:
                 update.effective_message.reply_text("no Entry found to substract")
                 EntryFound = False
@@ -427,13 +429,19 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             stoploss = float(stoploss)/10.
         else:
             try:
-                stoploss = float(firstentry) - float(stoploss)
+                stoploss = abs(float(firstentry) - float(stoploss))
             except:
                 update.effective_message.reply_text("no Entry found to substract")
                 EntryFound = False
         #update.effective_message.reply_text("SL = ")
         #update.effective_message.reply_text(stoploss)
-        trade['StopLoss'] = stoploss
+
+        #validate stoploss for dow and nas:
+        if(stoploss > 200):
+            EntryFound = False
+        else:
+            trade['StopLoss'] = stoploss
+
     
     #update.effective_message.reply_text("You entered that message:")
     #update.effective_message.reply_text(trade)
@@ -448,7 +456,7 @@ def GetTradeInformation(update: Update, trade: dict, balance: float) -> None:
         trade: dictionary that stores trade information
         balance: current balance of the MetaTrader account
     """
-    update.effective_message.reply_text("in GettradeInfo")
+    #update.effective_message.reply_text("in GettradeInfo")
     # calculates the stop loss in pips
     if(trade['Symbol'] == 'XAUUSD'):
         multiplier = 0.1
@@ -573,8 +581,8 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
         account_information = await connection.get_account_information()
 
         update.effective_message.reply_text("Successfully connected to MetaTrader!\nCalculating trade risk ... 🤔")
-        update.effective_message.reply_text("trade['Entry']:")
-        update.effective_message.reply_text(trade['Entry'])
+        #update.effective_message.reply_text("trade['Entry']:")
+        #update.effective_message.reply_text(trade['Entry'])
         # checks if the order is a market execution to get the current price of symbol
         if(trade['Entry'] == 'NOW'):
             price = await connection.get_symbol_price(symbol=trade['Symbol'])
@@ -592,8 +600,12 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
         update.effective_message.reply_text("GetTradeInformation and enter trade?")
         # produces a table with trade information
         GetTradeInformation(update, trade, account_information['balance'])
+
+        #check, if trade is valid:
+        if((trade['StopLoss']/trade['Entry'])>0.005):
+            enterTrade = False
         
-        update.effective_message.reply_text(enterTrade)
+        #update.effective_message.reply_text(enterTrade)
         # checks if the user has indicated to enter trade
         if(enterTrade == True):
 
@@ -866,6 +878,10 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         update.effective_message.reply_text("You are not authorized to use this bot! 🙅🏽‍♂️")
         return  
 
+    if(TRADINGISON == False):
+        update.effective_message.reply_text("trading is offline")
+        return
+    
     #update.effective_message.reply_text("in unknown")
     signal = update.effective_message.text
     context.user_data['trade'] = None
@@ -913,6 +929,36 @@ def help(update: Update, context: CallbackContext) -> None:
     update.effective_message.reply_text(help_message)
     update.effective_message.reply_text(commands)
     update.effective_message.reply_text(trade_example + market_execution_example + limit_example + note)
+
+    return
+
+def on(update: Update, context: CallbackContext) -> None:
+    """Activates trading
+
+    Arguments:
+        update: update from Telegram
+        context: CallbackContext object that stores commonly used objects in handler callbacks
+    """
+
+    TRADINGISON = True
+    
+    # sends messages to user
+    update.effective_message.reply_text("Trading activated")
+
+    return
+
+def off(update: Update, context: CallbackContext) -> None:
+    """Activates trading
+
+    Arguments:
+        update: update from Telegram
+        context: CallbackContext object that stores commonly used objects in handler callbacks
+    """
+
+    TRADINGISON = False
+    
+    # sends messages to user
+    update.effective_message.reply_text("Trading deactivated")
 
     return
 
@@ -993,6 +1039,12 @@ def main() -> None:
     # message handler
     dp.add_handler(CommandHandler("start", welcome))
 
+    # on state
+    dp.add_handler(CommandHandler("on", on))
+
+    # off state
+    dp.add_handler(CommandHandler("off", off))
+    
     # help command handler
     dp.add_handler(CommandHandler("help", help))
 
