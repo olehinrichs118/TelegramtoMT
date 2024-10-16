@@ -878,6 +878,9 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         update.effective_message.reply_text("You are not authorized to use this bot! 🙅🏽‍♂️")
         return  
 
+    update.effective_message.reply_text("TRADINGISON")
+    update.effective_message.reply_text(TRADINGISON)
+    
     if(TRADINGISON == False):
         update.effective_message.reply_text("trading is offline")
         return
