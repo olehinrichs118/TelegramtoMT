@@ -929,7 +929,7 @@ def help(update: Update, context: CallbackContext) -> None:
 
     return
 
-def on(update: Update, context: CallbackContext) -> None:
+def tradeon(update: Update, context: CallbackContext) -> None:
     """Activates trading
 
     Arguments:
@@ -942,9 +942,9 @@ def on(update: Update, context: CallbackContext) -> None:
     # sends messages to user
     update.effective_message.reply_text("Trading activated")
 
-    return TRADINGISON
+    return
 
-def off(update: Update, context: CallbackContext) -> None:
+def tradeoff(update: Update, context: CallbackContext) -> None:
     """Activates trading
 
     Arguments:
@@ -1037,10 +1037,10 @@ def main() -> None:
     dp.add_handler(CommandHandler("start", welcome))
 
     # on state
-    dp.add_handler(CommandHandler("on", on))
+    dp.add_handler(CommandHandler("tradeon", tradeon))
 
     # off state
-    dp.add_handler(CommandHandler("off", off))
+    dp.add_handler(CommandHandler("tradeoff", tradeoff))
     
     # help command handler
     dp.add_handler(CommandHandler("help", help))
