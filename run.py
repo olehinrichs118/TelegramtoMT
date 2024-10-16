@@ -879,9 +879,9 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
         return  
 
     update.effective_message.reply_text("TRADINGISON")
-    update.effective_message.reply_text(TRADINGISON)
+    update.effective_message.reply_text(context.user_data['trade'])
     
-    if(TRADINGISON == False):
+    if(Tcontext.user_data['trademodeon'] == False):
         update.effective_message.reply_text("trading is offline")
         return
     
@@ -943,7 +943,7 @@ def on(update: Update, context: CallbackContext) -> None:
         context: CallbackContext object that stores commonly used objects in handler callbacks
     """
 
-    TRADINGISON = True
+    context.user_data['trademodeon'] = True
     
     # sends messages to user
     update.effective_message.reply_text("Trading activated")
@@ -958,12 +958,12 @@ def off(update: Update, context: CallbackContext) -> None:
         context: CallbackContext object that stores commonly used objects in handler callbacks
     """
 
-    TRADINGISON = False
+    context.user_data['trademodeon'] = False
     
     # sends messages to user
     update.effective_message.reply_text("Trading deactivated")
 
-    return
+    return False
 
 def cancel(update: Update, context: CallbackContext) -> int:
     """Cancels and ends the conversation.   
@@ -1033,7 +1033,8 @@ def Calculation_Command(update: Update, context: CallbackContext) -> int:
 
 def main() -> None:
     """Runs the Telegram bot."""
-
+    context.user_data['trademodeon'] = False
+    
     updater = Updater(TOKEN, use_context=True)
 
     # get the dispatcher to register handlers
