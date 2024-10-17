@@ -557,6 +557,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
     api = MetaApi(API_KEY)
     
     try:
+        tradeold = trade
         account = await api.metatrader_account_api.get_account(ACCOUNT_ID)
         initial_state = account.state
         deployed_states = ['DEPLOYING', 'DEPLOYED']
@@ -732,6 +733,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                 # prints success message to console
                 logger.info('\nTrade entered successfully!')
                 logger.info('Result Code: {}\n'.format(result['stringCode']))
+                trade = tradeold
             
             except Exception as error:
                 logger.info(f"\nTrade failed with error: {error}\n")
@@ -783,8 +785,8 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
         account_information = await connection.get_account_information()
 
         update.effective_message.reply_text("Successfully connected to MetaTrader!\nCalculating trade risk ... 🤔")
-        #update.effective_message.reply_text("trade['Entry']:")
-        #update.effective_message.reply_text(trade['Entry'])
+        update.effective_message.reply_text("trade['Entry']:")
+        update.effective_message.reply_text(trade['Entry'])
         # checks if the order is a market execution to get the current price of symbol
         if(trade['Entry'] == 'NOW'):
             price = await connection.get_symbol_price(symbol=trade['Symbol'])
@@ -806,13 +808,16 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
         #Correction for Aqua:
         if(trade['Symbol'] == 'NDX100'):
             trade['Symbol'] = 'NAS100'
+            update.effective_message.reply_text("Nas symbol correction")
             
         if(trade['Symbol'] == 'US30'):
             trade['PositionSize'] = 0.2
+            update.effective_message.reply_text("US30 size correction")
             
         #check, if trade is valid:
         if((trade['StopLoss']/trade['Entry'])>0.005):
             enterTrade = False
+            update.effective_message.reply_text("Enter trade false")
         
         #update.effective_message.reply_text(enterTrade)
         # checks if the user has indicated to enter trade
