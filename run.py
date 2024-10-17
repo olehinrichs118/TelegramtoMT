@@ -58,8 +58,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
 
     signal = update.effective_message.text
     trade = {}
-    broker = 'fundednext'
-    #broker = 'vantage'
+    #broker = 'fundednext'
+    broker = 'vantage'
     firstTP = []
     secondTP = []
     stoploss = []
