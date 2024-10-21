@@ -251,7 +251,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'fundednext'):
             trade['Symbol'] = 'NDX100'
-            trade['PositionSize'] = 0.02
+            trade['PositionSize'] = 0.04
             #SymbolExists = True
         elif(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
@@ -525,13 +525,13 @@ def CreateTable(trade: dict, balance: float, stopLossPips: int, takeProfitPips: 
     
     table.add_row(['\nCurrent Balance', '\n$ {:,.2f}'.format(balance)])
     #table.add_row(['Potential Loss', '$ {:,.2f}'.format(round((trade['PositionSize'] * 10) * stopLossPips, 2))])
-    table.add_row(['Potential Loss', '$ {:,.2f}'.format(round(trade['PositionSize'] * stopLossPips, 2))])
+    table.add_row(['Potential Loss', '$ {:,.2f}'.format(round(trade['PositionSize'] * 10 * stopLossPips, 2))])
     # total potential profit from trade
     totalProfit = 0
 
     for count, takeProfit in enumerate(takeProfitPips):
         #profit = round((trade['PositionSize'] * 10 * (1 / len(takeProfitPips))) * takeProfit, 2)
-        profit = round(trade['PositionSize'] * takeProfit, 2)
+        profit = round(trade['PositionSize'] * 10 * takeProfit, 2)
         table.add_row([f'TP {count + 1} Profit', '$ {:,.2f}'.format(profit)])
         
         # sums potential profit from each take profit target
@@ -602,7 +602,7 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
         GetTradeInformation(update, trade, account_information['balance'])
 
         #check, if trade is valid:
-        if((trade['StopLoss']/trade['Entry'])>0.005):
+        if((trade['StopLoss']/trade['Entry'])>0.008):
             enterTrade = False
         
         #update.effective_message.reply_text(enterTrade)
@@ -757,49 +757,49 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
     api = MetaApi(API_KEY2)
     
     try:
-        account = await api.metatrader_account_api.get_account(ACCOUNT_ID2)
-        initial_state = account.state
+        account2 = await api.metatrader_account_api.get_account(ACCOUNT_ID2)
+        initial_state2 = account2.state
         deployed_states = ['DEPLOYING', 'DEPLOYED']
 
-        if initial_state not in deployed_states:
+        if initial_state2 not in deployed_states:
             #  wait until account is deployed and connected to broker
             logger.info('Deploying account')
-            await account.deploy()
+            await account2.deploy()
 
         logger.info('Waiting for API server to connect to broker ...')
-        await account.wait_connected()
+        await account2.wait_connected()
 
         # connect to MetaApi API
-        connection = account.get_rpc_connection()
-        await connection.connect()
+        connection2 = account2.get_rpc_connection()
+        await connection2.connect()
 
         # wait until terminal state synchronized to the local state
         logger.info('Waiting for SDK to synchronize to terminal state ...')
-        await connection.wait_synchronized()
+        await connection2.wait_synchronized()
 
         # obtains account information from MetaTrader server
-        account_information = await connection.get_account_information()
+        account_information2 = await connection2.get_account_information()
 
         update.effective_message.reply_text("Successfully connected to MetaTrader!\nCalculating trade risk ... 🤔")
-        update.effective_message.reply_text("trade['Entry']:")
-        update.effective_message.reply_text(trade['Entry'])
+        #update.effective_message.reply_text("trade['Entry']:")
+        #update.effective_message.reply_text(trade['Entry'])
         # checks if the order is a market execution to get the current price of symbol
         if(trade['Entry'] == 'NOW'):
-            price = await connection.get_symbol_price(symbol=trade['Symbol'])
-            symspec = await connection.get_symbol_specification(symbol=trade['Symbol'])
+            price2 = await connection2.get_symbol_price(symbol=trade['Symbol'])
+            symspec2 = await connection2.get_symbol_specification(symbol=trade['Symbol'])
             #print(price)
             #print(symspec)
             # uses bid price if the order type is a buy
             if(trade['OrderType'] == 'Buy'):
-                trade['Entry'] = float(price['bid'])
+                trade['Entry2'] = float(price2['bid'])
 
             # uses ask price if the order type is a sell
             if(trade['OrderType'] == 'Sell'):
-                trade['Entry'] = float(price['ask'])
+                trade['Entry2'] = float(price2['ask'])
 
         update.effective_message.reply_text("GetTradeInformation and enter trade?")
         # produces a table with trade information
-        GetTradeInformation(update, trade, account_information['balance'])
+        GetTradeInformation(update, trade, account_information2['balance'])
 
         #Correction for Aqua:
         if(trade['Symbol'] == 'NDX100'):
@@ -811,7 +811,7 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
             update.effective_message.reply_text("US30 size correction")
             
         #check, if trade is valid:
-        if((trade['StopLoss']/trade['Entry'])>0.005):
+        if((trade['StopLoss']/trade['Entry2'])>0.008):
             enterTrade = False
             update.effective_message.reply_text("Enter trade false")
         
@@ -826,17 +826,17 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
                         
                 # executes buy market execution order
                 if(trade['OrderType'] == 'Buy'):
-                    trade['TP1'] = float(trade['Entry']) + trade['TP1']
-                    trade['TP2'] = float(trade['Entry']) + trade['TP2']
-                    trade['TP3'] = float(trade['Entry']) + trade['TP3']
-                    trade['StopLoss'] = float(trade['Entry']) - trade['StopLoss']
+                    trade['TP1'] = float(trade['Entry2']) + trade['TP1']
+                    trade['TP2'] = float(trade['Entry2']) + trade['TP2']
+                    trade['TP3'] = float(trade['Entry2']) + trade['TP3']
+                    trade['StopLoss'] = float(trade['Entry2']) - trade['StopLoss']
                     result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
+                            'threshold': (trade['Entry2']+40), 'stopLoss': (trade['Entry2']+5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP2'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
+                            'threshold': (trade['Entry2']+40), 'stopLoss': (trade['Entry2']+5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     #runner:
                     result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
@@ -848,53 +848,53 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
 
                 # executes buy limit order
                 elif(trade['OrderType'] == 'Buy Limit'):
-                    trade['TP1'] = float(trade['Entry']) + trade['TP1']
-                    trade['TP2'] = float(trade['Entry']) + trade['TP2']
-                    trade['TP3'] = float(trade['Entry']) + trade['TP3']
-                    trade['StopLoss'] = float(trade['Entry']) - trade['StopLoss']
-                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP1'], {
+                    trade['TP1'] = float(trade['Entry2']) + trade['TP1']
+                    trade['TP2'] = float(trade['Entry2']) + trade['TP2']
+                    trade['TP3'] = float(trade['Entry2']) + trade['TP3']
+                    trade['StopLoss'] = float(trade['Entry2']) - trade['StopLoss']
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
+                            'threshold': (trade['Entry2']+40), 'stopLoss': (trade['Entry2']+5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'], {
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP2'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
+                            'threshold': (trade['Entry2']+40), 'stopLoss': (trade['Entry2']+5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
+                    result = await connection.create_limit_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
                             'distance': 40,
                             'units': 'RELATIVE_PRICE'}}}) 
                 # executes buy stop order
                 elif(trade['OrderType'] == 'Buy Stop'):
-                    trade['TP1'] = float(trade['Entry']) + trade['TP1']
-                    trade['TP2'] = float(trade['Entry']) + trade['TP2']
-                    trade['TP3'] = float(trade['Entry']) + trade['TP3']
-                    trade['StopLoss'] = float(trade['Entry']) - trade['StopLoss']
-                    result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP1'], {
+                    trade['TP1'] = float(trade['Entry2']) + trade['TP1']
+                    trade['TP2'] = float(trade['Entry2']) + trade['TP2']
+                    trade['TP3'] = float(trade['Entry2']) + trade['TP3']
+                    trade['StopLoss'] = float(trade['Entry2']) - trade['StopLoss']
+                    result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
+                            'threshold': (trade['Entry2']+40), 'stopLoss': (trade['Entry2']+5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'], {
+                    result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP2'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+40), 'stopLoss': (trade['Entry']+5)}],
+                            'threshold': (trade['Entry2']+40), 'stopLoss': (trade['Entry2']+5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
+                    result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
                             'distance': 40,
                             'units': 'RELATIVE_PRICE'}}})
                 # executes sell market execution order
                 elif(trade['OrderType'] == 'Sell'):
-                    trade['TP1'] = float(trade['Entry']) - trade['TP1']
-                    trade['TP2'] = float(trade['Entry']) - trade['TP2']
-                    trade['TP3'] = float(trade['Entry']) - trade['TP3']
-                    trade['StopLoss'] = float(trade['Entry']) + trade['StopLoss']
+                    trade['TP1'] = float(trade['Entry2']) - trade['TP1']
+                    trade['TP2'] = float(trade['Entry2']) - trade['TP2']
+                    trade['TP3'] = float(trade['Entry2']) - trade['TP3']
+                    trade['StopLoss'] = float(trade['Entry2']) + trade['StopLoss']
                     result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
+                            'threshold': (trade['Entry2']-40), 'stopLoss': (trade['Entry2']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP2'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
+                            'threshold': (trade['Entry2']-40), 'stopLoss': (trade['Entry2']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
@@ -902,37 +902,37 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
                             'units': 'RELATIVE_PRICE'}}})
                 # executes sell limit order
                 elif(trade['OrderType'] == 'Sell Limit'):
-                    trade['TP1'] = float(trade['Entry']) - trade['TP1']
-                    trade['TP2'] = float(trade['Entry']) - trade['TP2']
-                    trade['TP3'] = float(trade['Entry']) - trade['TP3']
-                    trade['StopLoss'] = float(trade['Entry']) + trade['StopLoss']
-                    result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP1'], {
+                    trade['TP1'] = float(trade['Entry2']) - trade['TP1']
+                    trade['TP2'] = float(trade['Entry2']) - trade['TP2']
+                    trade['TP3'] = float(trade['Entry2']) - trade['TP3']
+                    trade['StopLoss'] = float(trade['Entry2']) + trade['StopLoss']
+                    result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
+                            'threshold': (trade['Entry2']-40), 'stopLoss': (trade['Entry2']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'], {
+                    result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP2'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
+                            'threshold': (trade['Entry2']-40), 'stopLoss': (trade['Entry2']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
+                    result = await connection.create_limit_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
                             'distance': 40,
                             'units': 'RELATIVE_PRICE'}}})
                 # executes sell stop order
                 elif(trade['OrderType'] == 'Sell Stop'):
-                    trade['TP1'] = float(trade['Entry']) - trade['TP1']
-                    trade['TP2'] = float(trade['Entry']) - trade['TP2']
-                    trade['TP3'] = float(trade['Entry']) - trade['TP3']
-                    trade['StopLoss'] = float(trade['Entry']) + trade['StopLoss']
-                    result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP1'], {
+                    trade['TP1'] = float(trade['Entry2']) - trade['TP1']
+                    trade['TP2'] = float(trade['Entry2']) - trade['TP2']
+                    trade['TP3'] = float(trade['Entry2']) - trade['TP3']
+                    trade['StopLoss'] = float(trade['Entry2']) + trade['StopLoss']
+                    result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
+                            'threshold': (trade['Entry2']-40), 'stopLoss': (trade['Entry2']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP2'], {
+                    result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP2'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-40), 'stopLoss': (trade['Entry']-5)}],
+                            'threshold': (trade['Entry2']-40), 'stopLoss': (trade['Entry2']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                    result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLoss'], trade['TP3'], {
+                    result = await connection.create_stop_sell_order(trade['Symbol'], trade['PositionSize'], trade['Entry2'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
                             'distance': 40,
                             'units': 'RELATIVE_PRICE'}}})
