@@ -288,6 +288,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(SymbolExists == False):
         update.effective_message.reply_text("no Symbol found, ignore")
         return {}
+
+    trade['Entry2'] = trade['Entry']
         
     #elif('Gold'.lower() or 'XAUUSD'.lower() or 'US100'.lower() or 'US 100'.lower() in signal.lower()):
     #    if(broker == 'vantage'):
@@ -784,7 +786,7 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
         #update.effective_message.reply_text("trade['Entry']:")
         #update.effective_message.reply_text(trade['Entry'])
         # checks if the order is a market execution to get the current price of symbol
-        if(trade['Entry'] == 'NOW'):
+        if(trade['Entry2'] == 'NOW'):
             price2 = await connection2.get_symbol_price(symbol=trade['Symbol'])
             symspec2 = await connection2.get_symbol_specification(symbol=trade['Symbol'])
             #print(price)
