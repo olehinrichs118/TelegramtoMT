@@ -31,6 +31,21 @@ APP_URL = os.environ.get("APP_URL")
 # Port number for Telegram bot web hook
 PORT = int(os.environ.get('PORT', '8443'))
 
+# Read configuration from environment variables
+APP_ID = os.environ.get("APP_ID")
+API_HASH = os.environ.get("API_HASH")
+SESSION = os.environ.get("SESSION")
+FROM_ = os.environ.get("FROM_")
+TO_ = os.environ.get("TO_")
+
+BLOCKED_TEXTS = ""
+MEDIA_FORWARD_RESPONSE = "yes"
+
+FROM = [int(i) for i in FROM_.split()]
+TO = [int(i) for i in TO_.split()]
+
+YOUR_ADMIN_USER_ID = 0
+BOT_API_KEY = ""
 
 # Enables logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -1161,6 +1176,46 @@ def tradeon(update: Update, context: CallbackContext) -> None:
     # sends messages to user
     update.effective_message.reply_text("Trading activated")
 
+    # Initialize Telethon client
+    try:
+        steallootdealUser = TelegramClient(StringSession(SESSION), APP_ID, API_HASH)
+        steallootdealUser.start()
+    except Exception as ap:
+        print(f"ERROR - {ap}")
+        exit(1)
+
+    # Event handler for incoming messages
+    @steallootdealUser.on(events.NewMessage(incoming=True, chats=FROM))
+    async def sender_bH(event):
+        for i in TO:
+            try:
+                message_text = event.raw_text.lower()
+
+                if any(blocked_text in message_text for blocked_text in BLOCKED_TEXTS):
+                    print(f"Blocked message containing one of the specified texts: {event.raw_text}")
+                    logging.warning(f"Blocked message containing one of the specified texts: {event.raw_text}")
+                    continue
+
+                if event.media:
+                    user_response = MEDIA_FORWARD_RESPONSE
+                    if user_response != 'yes':
+                        print(f"Media forwarding skipped by user for message: {event.raw_text}")
+                        continue
+
+                    await steallootdealUser.send_message(i, message_text, file=event.media)
+                    print(f"Forwarded media message to channel {i}")
+
+                else:
+                    await steallootdealUser.send_message(i, message_text)
+                    print(f"Forwarded text message to channel {i}")
+
+            except Exception as e:
+                print(f"Error forwarding message to channel {i}: {e}")
+
+    # Run the bot
+    #print("Bot has started.")
+    steallootdealUser.run_until_disconnected()
+    
     return
 
 def tradeoff(update: Update, context: CallbackContext) -> None:
