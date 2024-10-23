@@ -35,8 +35,8 @@ PORT = int(os.environ.get('PORT', '8443'))
 APP_ID = os.environ.get("APP_ID")
 API_HASH = os.environ.get("API_HASH")
 SESSION = os.environ.get("SESSION")
-FROM_ = os.environ.get("FROM_")
-TO_ = os.environ.get("TO_")
+FROM_ = str(os.environ.get("FROM_"))
+TO_ = str(os.environ.get("TO_"))
 
 BLOCKED_TEXTS = ""
 MEDIA_FORWARD_RESPONSE = "yes"
