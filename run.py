@@ -756,10 +756,16 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
     """
 
     # creates connection to MetaAPI
-    api = MetaApi(API_KEY2)
+    api2 = MetaApi(API_KEY2)
     
     try:
-        account2 = await api.metatrader_account_api.get_account(ACCOUNT_ID2)
+
+        #Correction for Aqua:
+        if(trade['Symbol'] == 'NDX100'):
+            trade['Symbol'] = 'NAS100'
+            update.effective_message.reply_text("Nas symbol correction")
+        
+        account2 = await api2.metatrader_account_api.get_account(ACCOUNT_ID2)
         initial_state2 = account2.state
         deployed_states = ['DEPLOYING', 'DEPLOYED']
 
@@ -802,11 +808,6 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
         update.effective_message.reply_text("GetTradeInformation and enter trade?")
         # produces a table with trade information
         GetTradeInformation(update, trade, account_information2['balance'])
-
-        #Correction for Aqua:
-        if(trade['Symbol'] == 'NDX100'):
-            trade['Symbol'] = 'NAS100'
-            update.effective_message.reply_text("Nas symbol correction")
             
         if(trade['Symbol'] == 'US30'):
             trade['PositionSize'] = 0.2
