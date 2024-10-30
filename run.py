@@ -96,12 +96,12 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         trade['OrderType'] = 'Sell Stop'
         OrderLater = True
         OrderTypeExists = True
-    elif('Buy'.lower() in signal.lower()):
+    elif('Buy'.lower() in signal.lower() or 'Long'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
         trade['Entry'] = 'NOW'
         #update.effective_message.reply_text("in Buy")
         OrderTypeExists = True
-    elif('Sell'.lower() in signal.lower()):
+    elif('Sell'.lower() in signal.lower() or 'Short'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
         trade['Entry'] = 'NOW'
         OrderTypeExists = True
@@ -171,7 +171,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'fundednext'):
             trade['Symbol'] = 'US30'
-            trade['PositionSize'] = 0.02
+            trade['PositionSize'] = 0.04
             #SymbolExists = True
             #update.effective_message.reply_text("in DJ30")
         elif(broker == 'vantage'):
@@ -251,7 +251,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'fundednext'):
             trade['Symbol'] = 'NDX100'
-            trade['PositionSize'] = 0.04
+            trade['PositionSize'] = 0.05
             #SymbolExists = True
         elif(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
@@ -1102,7 +1102,7 @@ def unknown_command(update: Update, context: CallbackContext) -> None:
     #update.effective_message.reply_text("in unknown")
     signal = update.effective_message.text
     context.user_data['trade'] = None
-    if('Buy'.lower() in signal.lower() or 'Sell'.lower() in signal.lower()):
+    if('Buy'.lower() in signal.lower() or 'Sell'.lower() in signal.lower() or 'Long'.lower() in signal.lower() or 'Short'.lower() in signal.lower()):
         SendTrade(update, context)
     else:
         update.effective_message.reply_text("ignore message")
