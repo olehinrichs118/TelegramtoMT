@@ -421,8 +421,8 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     SLposition = signal.lower().find('sl')
     #update.effective_message.reply_text(SLposition)
     if(SLposition == -1):
-        #update.effective_message.reply_text("No SL, use -40")
-        trade['StopLoss'] = 40.
+        #update.effective_message.reply_text("No SL, use -100")
+        trade['StopLoss'] = 100.
     else:
         stoploss = re.findall('\d+\.\d+|\d+', signal[SLposition:])[0]
         textafterSL = signal[SLposition:].splitlines()[0]
