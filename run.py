@@ -768,6 +768,15 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
     
     try:
 
+        #Correction for Vant Ole:
+        if(trade['Symbol'] == 'NAS100'):
+            trade['Symbol'] = 'NAS100.r'
+            update.effective_message.reply_text("Nas symbol correction")
+
+        if(trade['Symbol'] == 'DJ30'):
+            trade['Symbol'] = 'DJ30.r'
+            update.effective_message.reply_text("Dow symbol correction")
+        
         account2 = await api2.metatrader_account_api.get_account(ACCOUNT_ID2)
         initial_state2 = account2.state
         deployed_states = ['DEPLOYING', 'DEPLOYED']
