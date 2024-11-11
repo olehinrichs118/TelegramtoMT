@@ -911,7 +911,7 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
                         'trailingStopLoss': {'threshold': {'thresholds': [{
                             'threshold': (trade['Entry2']-30), 'stopLoss': (trade['Entry2']-5)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
-                   result = await connection2.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
+                    result = await connection2.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'distance': {
                             'distance': 40,
                             'units': 'RELATIVE_PRICE'}}})
