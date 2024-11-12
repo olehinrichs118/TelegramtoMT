@@ -810,8 +810,10 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
         GetTradeInformation(update, trade, account_information2['balance'])
             
         if(trade['Symbol'] == 'US30'):
-            trade['PositionSize'] = 0.2
+            trade['PositionSize'] = 0.4
             update.effective_message.reply_text("US30 size correction")
+        else:
+            trade['PositionSize'] = 0.1
             
         #check, if trade is valid:
         if((trade['StopLoss']/trade['Entry2'])>0.008):
