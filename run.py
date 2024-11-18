@@ -259,45 +259,24 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
-
-    elif('BTCUSD'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('btcusd')
-        #update.effective_message.reply_text("look for btc")
-    else: 
-        Entryposition = -1
-        #update.effective_message.reply_text("btc not found")
-    if(Entryposition != -1):
-        if(broker == 'vantage'):
-            trade['Symbol'] = 'BTCUSD'
-            trade['PositionSize'] = 0.01
-            SymbolExists = True
-            try:
-                if(Upperpositionlimit == -1):
-                    firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
-                else:
-                    firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
-                EntryExists = True
-            except:
-                #update.effective_message.reply_text("no Entry found")
-                EntryFound = False
                 
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
 
-    if(SymbolExists == False):
-        update.effective_message.reply_text("no Symbol found, ignore")
-        return {}
-
-
-        
     elif('Goldole'.lower() in signal.lower()):
         trade['Symbol'] = 'XAUUSD'
         trade['PositionSize'] = 0.02
+        SymbolExists = True
 
     elif('btcole'.lower() in signal.lower()):
         trade['Symbol'] = 'BTCUSD'
         trade['PositionSize'] = 0.02
+        SymbolExists = True
+    
+    if(SymbolExists == False):
+        update.effective_message.reply_text("no Symbol found, ignore")
+        return {}
     
     #if(SymbolExists != True):
     #    update.effective_message.reply_text("no known symbol found")
@@ -813,6 +792,18 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
 
     # creates connection to MetaAPI
     api2 = MetaApi(API_KEY2)
+    Thold = 20
+    Entryup = 8
+
+     #Correction for Gold:
+    if(trade['Symbol'] == 'XAUUSD'):
+        Thold = 2
+        Entryup = 0.3
+
+    #Correction for BTC:
+    if(trade['Symbol'] == 'BTCUSD'):
+        Thold = 200
+        Entryup = 100
     
     try:
 
@@ -868,8 +859,6 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
         if(trade['Symbol'] == 'US30'):
             trade['PositionSize'] = 0.4
             update.effective_message.reply_text("US30 size correction")
-        else:
-            trade['PositionSize'] = 0.1
             
         #check, if trade is valid:
         if((trade['StopLoss']/trade['Entry2'])>0.008):
