@@ -851,6 +851,7 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
 
             # enters trade on to MetaTrader account
             update.effective_message.reply_text("Entering trade on MetaTrader Account ... 👨🏾‍💻")
+            try:
 
             # executes buy market execution order
                 if(trade['OrderType'] == 'Buy'):
