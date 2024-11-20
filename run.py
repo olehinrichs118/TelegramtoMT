@@ -797,17 +797,17 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
 
         #Correction for Vant Ole:
         if(trade['Symbol'] == 'NAS100.pro'):
-            trade['Symbol'] = 'US100_Spot'
+            trade['Symbol'] = 'NDX100'
             trade['PositionSize'] = 0.02
             update.effective_message.reply_text("Nas symbol correction")
 
         if(trade['Symbol'] == 'US30.pro'):
-            trade['Symbol'] = 'US30_SPOT'
+            trade['Symbol'] = 'US30'
             trade['PositionSize'] = 0.02
             update.effective_message.reply_text("Dow symbol correction")
 
         if(trade['Symbol'] == 'XAUUSD.pro'):
-            trade['Symbol'] = 'XAUUSD.'
+            trade['Symbol'] = 'XAUUSD'
             update.effective_message.reply_text("Gold symbol correction")
         
         account2 = await api2.metatrader_account_api.get_account(ACCOUNT_ID2)
