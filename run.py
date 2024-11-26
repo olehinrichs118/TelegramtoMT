@@ -171,7 +171,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'fundednext'):
             trade['Symbol'] = 'US30'
-            trade['PositionSize'] = 0.04
+            trade['PositionSize'] = 0.03
             #SymbolExists = True
             #update.effective_message.reply_text("in DJ30")
         elif(broker == 'vantage'):
@@ -251,7 +251,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     if(Entryposition != -1):
         if(broker == 'fundednext'):
             trade['Symbol'] = 'NDX100'
-            trade['PositionSize'] = 0.04
+            trade['PositionSize'] = 0.03
             #SymbolExists = True
         elif(broker == 'vantage'):
             trade['Symbol'] = 'NAS100'
