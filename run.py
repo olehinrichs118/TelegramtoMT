@@ -804,6 +804,8 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
 
     #Correction for BTC:
     if(trade['Symbol'] == 'BTCUSD'):
+        trade['Symbol'] = 'BTCUSD.'
+        trade['PositionSize'] = 0.01
         Thold = 200
         Entryup = 100
     
