@@ -811,11 +811,16 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
     
     try:
 
-        #Correction for Aqua:
+        #Correction:
         if(trade['Symbol'] == 'NDX100'):
             trade['Symbol'] = 'US100_Spot'
             trade['PositionSize'] = 0.01
             update.effective_message.reply_text("Nas symbol correction")
+
+        if(trade['Symbol'] == 'US30'):
+            trade['PositionSize'] = 0.01
+            trade['Symbol'] = 'US30_SPOT'
+            update.effective_message.reply_text("US30 size correction")
         
         account2 = await api2.metatrader_account_api.get_account(ACCOUNT_ID2)
         initial_state2 = account2.state
@@ -860,11 +865,6 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
         update.effective_message.reply_text("GetTradeInformation and enter trade?")
         # produces a table with trade information
         GetTradeInformation(update, trade, account_information2['balance'])
-            
-        if(trade['Symbol'] == 'US30'):
-            trade['PositionSize'] = 0.01
-            trade['Symbol'] = 'US30_SPOT'
-            update.effective_message.reply_text("US30 size correction")
             
         #check, if trade is valid:
         if((trade['StopLoss']/trade['Entry2'])>0.008):
