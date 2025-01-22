@@ -169,7 +169,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     else: 
         Entryposition = -1        
     if(Entryposition != -1):
-        trade['Symbol'] = 'US30.pro'
+        trade['Symbol'] = 'DOW30_fx'
         trade['PositionSize'] = 0.06
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
@@ -243,19 +243,19 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
     else: 
         Entryposition = -1
     if(Entryposition != -1):
-        trade['Symbol'] = 'NAS100.pro'
+        trade['Symbol'] = 'USTech100_fx'
         trade['PositionSize'] = 0.06
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
 
     elif('Goldole'.lower() in signal.lower()):
-        trade['Symbol'] = 'XAUUSD.pro'
+        trade['Symbol'] = 'XAUUSD_fx'
         trade['PositionSize'] = 0.02
         SymbolExists = True
 
     elif('btcole'.lower() in signal.lower()):
-        trade['Symbol'] = 'BTCUSD.'
+        trade['Symbol'] = 'BTCUSD'
         trade['PositionSize'] = 0.02
         SymbolExists = True
 
@@ -418,14 +418,14 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
             trade['StopLoss'] = stoploss
 
     #Correction for Gold:
-    if(trade['Symbol'] == 'XAUUSD.pro'):
+    if(trade['Symbol'] == 'XAUUSD_fx'):
         trade['StopLoss'] = 5
         trade['TP1'] = 2
         trade['TP2'] = 4
         trade['TP3'] = 7
 
     #Correction for BTC:
-    if(trade['Symbol'] == 'BTCUSD.'):
+    if(trade['Symbol'] == 'BTCUSD'):
         trade['StopLoss'] = 400
         trade['TP1'] = 200
         trade['TP2'] = 400
@@ -544,16 +544,16 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
 
     # creates connection to MetaAPI
     api = MetaApi(API_KEY)
-    Thold = 20
+    Thold = 40
     Entryup = 8
 
      #Correction for Gold:
-    if(trade['Symbol'] == 'XAUUSD.pro'):
+    if(trade['Symbol'] == 'XAUUSD_fx'):
         Thold = 2
         Entryup = 0.3
 
     #Correction for BTC:
-    if(trade['Symbol'] == 'BTCUSD.'):
+    if(trade['Symbol'] == 'BTCUSD'):
         Thold = 200
         Entryup = 100
     
@@ -780,39 +780,39 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
 
     # creates connection to MetaAPI
     api2 = MetaApi(API_KEY2)
-    Thold = 20
+    Thold = 40
     Entryup = 8
 
      #Correction for Gold:
-    if(trade['Symbol'] == 'XAUUSD.pro'):
+    if(trade['Symbol'] == 'XAUUSD_fx'):
         Thold = 2
         Entryup = 0.3
 
     #Correction for BTC:
-    if(trade['Symbol'] == 'BTCUSD.'):
+    if(trade['Symbol'] == 'BTCUSD'):
         Thold = 200
         Entryup = 100
         
     try:
 
         #Correction for Direct Traders:
-        if(trade['Symbol'] == 'NAS100.pro'):
-            trade['Symbol'] = 'USTech100_fx'
-            trade['PositionSize'] = 0.01
+        if(trade['Symbol'] == 'USTech100_fx'):
+            trade['Symbol'] = 'NAS100.p'
+            trade['PositionSize'] = 0.02
             update.effective_message.reply_text("Nas symbol correction")
 
-        if(trade['Symbol'] == 'US30.pro'):
-            trade['Symbol'] = 'US30_RP'
-            trade['PositionSize'] = 0.01
+        if(trade['Symbol'] == 'DOW30_fx'):
+            trade['Symbol'] = 'DJ30.p'
+            trade['PositionSize'] = 0.02
             update.effective_message.reply_text("Dow symbol correction")
 
-        if(trade['Symbol'] == 'XAUUSD.pro'):
-            trade['Symbol'] = 'XAUUSD_fx'
+        if(trade['Symbol'] == 'XAUUSD_fx'):
+            trade['Symbol'] = 'XAUUSD.pi'
             trade['PositionSize'] = 0.01
             update.effective_message.reply_text("Gold symbol correction")
 
-        if(trade['Symbol'] == 'BTCUSD.'):
-            trade['Symbol'] = 'BTCUSD_fx'
+        if(trade['Symbol'] == 'BTCUSD'):
+            trade['Symbol'] = 'BTCUSD.pi'
             trade['PositionSize'] = 0.01
             update.effective_message.reply_text("BTC symbol correction")
         
@@ -880,16 +880,16 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
                     trade['StopLoss'] = float(trade['Entry2']) - trade['StopLoss']
                     result = await connection2.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+Thold), 'stopLoss': (trade['Entry']+Entryup)}],
+                            'threshold': (trade['Entry2']+Thold), 'stopLoss': (trade['Entry2']+Entryup)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection2.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP2'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+Thold), 'stopLoss': (trade['Entry']+Entryup)}],
+                            'threshold': (trade['Entry2']+Thold), 'stopLoss': (trade['Entry2']+Entryup)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     #runner:
                     result = await connection2.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']+Thold), 'stopLoss': (trade['Entry']+Entryup)}],
+                            'threshold': (trade['Entry2']+Thold), 'stopLoss': (trade['Entry2']+Entryup)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     #result = await connection.create_market_buy_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
                     #    'trailingStopLoss': {'distance': {
@@ -948,15 +948,15 @@ async def ConnectMetaTrader2(update: Update, trade: dict, enterTrade: bool):
                     trade['StopLoss'] = float(trade['Entry']) + trade['StopLoss']
                     result = await connection2.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP1'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-Thold), 'stopLoss': (trade['Entry']-Entryup)}],
+                            'threshold': (trade['Entry2']-Thold), 'stopLoss': (trade['Entry2']-Entryup)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection2.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP2'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-Thold), 'stopLoss': (trade['Entry']+Entryup)}],
+                            'threshold': (trade['Entry2']-Thold), 'stopLoss': (trade['Entry2']+Entryup)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     result = await connection2.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
-                            'threshold': (trade['Entry']-Thold), 'stopLoss': (trade['Entry']+Entryup)}],
+                            'threshold': (trade['Entry2']-Thold), 'stopLoss': (trade['Entry2']+Entryup)}],
                             'units': 'ABSOLUTE_PRICE', 'stopPriceBase': 'OPEN_PRICE'}}})
                     #result = await connection2.create_market_sell_order(trade['Symbol'], trade['PositionSize'], trade['StopLoss'], trade['TP3'], {
                     #    'trailingStopLoss': {'distance': {
