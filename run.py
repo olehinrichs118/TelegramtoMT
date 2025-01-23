@@ -663,9 +663,9 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
                        #     'units': 'RELATIVE_PRICE'}}}) 
                 # executes buy stop order
                 elif(trade['OrderType'] == 'Buy Stop'):
-                    trade['TP1in'] = float(trade['Entry']) + trade['TP1in']
-                    trade['TP2in'] = float(trade['Entry']) + trade['TP2in']
-                    trade['TP3in'] = float(trade['Entry']) + trade['TP3in']
+                    trade['TP1in'] = float(trade['Entry']) + trade['TP1']
+                    trade['TP2in'] = float(trade['Entry']) + trade['TP2']
+                    trade['TP3in'] = float(trade['Entry']) + trade['TP3']
                     trade['StopLossin'] = float(trade['Entry']) - trade['StopLoss']
                     result = await connection.create_stop_buy_order(trade['Symbol'], trade['PositionSize'], trade['Entry'], trade['StopLossin'], trade['TP1in'], {
                         'trailingStopLoss': {'threshold': {'thresholds': [{
