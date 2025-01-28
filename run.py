@@ -592,13 +592,9 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
         # checks if the order is a market execution to get the current price of symbol
         if(trade['Entry'] == 'NOW'):
             price = await connection.get_symbol_price(symbol=trade['Symbol'])
-            update.effective_message.reply_text("got prince info:")
-            update.effective_message.reply_text(price)
+            print(price)
             symspec = await connection.get_symbol_specification(symbol=trade['Symbol'])
-            update.effective_message.reply_text("got symb spec:")
-            update.effective_message.reply_text(symspec)
-            #print(price)
-            #print(symspec)
+            print(symspec)
             # uses bid price if the order type is a buy
             if(trade['OrderType'] == 'Buy'):
                 trade['Entry'] = float(price['bid'])
