@@ -566,28 +566,37 @@ async def ConnectMetaTrader(update: Update, trade: dict, enterTrade: bool):
             #  wait until account is deployed and connected to broker
             logger.info('Deploying account')
             await account.deploy()
-
+        
         logger.info('Waiting for API server to connect to broker ...')
         await account.wait_connected()
+        update.effective_message.reply_text("Connection waited")
 
         # connect to MetaApi API
         connection = account.get_rpc_connection()
         await connection.connect()
+        update.effective_message.reply_text("Connected")
 
         # wait until terminal state synchronized to the local state
         logger.info('Waiting for SDK to synchronize to terminal state ...')
         await connection.wait_synchronized()
+        update.effective_message.reply_text("Synchronized")
 
         # obtains account information from MetaTrader server
         account_information = await connection.get_account_information()
+        update.effective_message.reply_text("got account info:")
+        update.effective_message.reply_text(account_information)
 
         update.effective_message.reply_text("Successfully connected to MetaTrader!\nCalculating trade risk ... 🤔")
-        #update.effective_message.reply_text("trade['Entry']:")
-        #update.effective_message.reply_text(trade['Entry'])
+        update.effective_message.reply_text("trade['Entry']:")
+        update.effective_message.reply_text(trade['Entry'])
         # checks if the order is a market execution to get the current price of symbol
         if(trade['Entry'] == 'NOW'):
             price = await connection.get_symbol_price(symbol=trade['Symbol'])
+            update.effective_message.reply_text("got prince info:")
+            update.effective_message.reply_text(price)
             symspec = await connection.get_symbol_specification(symbol=trade['Symbol'])
+            update.effective_message.reply_text("got symb spec:")
+            update.effective_message.reply_text(symspec)
             #print(price)
             #print(symspec)
             # uses bid price if the order type is a buy
@@ -1062,7 +1071,9 @@ def SendTrade(update: Update, context: CallbackContext) -> None:
 
     if(context.user_data['trade'] != None):
         # attempts connection to MetaTrader and places trade
+        update.effective_message.reply_text("Connect to account 1")
         asyncio.run(ConnectMetaTrader(update, context.user_data['trade'], True))
+        update.effective_message.reply_text("Connect to account 2")
         asyncio.run(ConnectMetaTrader2(update, context.user_data['trade'], True))
         # removes trade from user context data
         context.user_data['trade'] = None
