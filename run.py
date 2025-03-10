@@ -96,12 +96,12 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         trade['OrderType'] = 'Sell Stop'
         OrderLater = True
         OrderTypeExists = True
-    elif('Buy'.lower() in signal.lower() or 'Long'.lower() in signal.lower()):
+    elif('Buynow'.lower() in signal.lower() or 'Long'.lower() in signal.lower()):
         trade['OrderType'] = 'Buy'
         trade['Entry'] = 'NOW'
         #update.effective_message.reply_text("in Buy")
         OrderTypeExists = True
-    elif('Sell'.lower() in signal.lower() or 'Short'.lower() in signal.lower()):
+    elif('Sellnow'.lower() in signal.lower() or 'Short'.lower() in signal.lower()):
         trade['OrderType'] = 'Sell'
         trade['Entry'] = 'NOW'
         OrderTypeExists = True
@@ -128,39 +128,14 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
      #   update.effective_message.reply_text("TP used as upper position limit")
     
     #check which Symbol:
-    if('Dow '.lower() in signal.lower()):
-        Entryposition = signal.lower().find('dow')
-        #find Dow Entry
+    if('Gold '.lower() in signal.lower()):
+        Entryposition = signal.lower().find('gold')
+        #find gold Entry
         try:
             if(Upperpositionlimit == -1):
                 firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
             else:
                 firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
-            EntryExists = True
-        except:
-            #update.effective_message.reply_text("no Entry found")
-            EntryFound = False
-        SymbolExists = True
-    elif('US30'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('us30')
-        #find Dow Entry
-        try:
-            if(Upperpositionlimit == -1):
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
-            else:
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
-            EntryExists = True
-        except:
-            update.effective_message.reply_text("no Entry found")
-        SymbolExists = True
-    elif('US 30'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('us 30')
-        #find Dow Entry
-        try:
-            if(Upperpositionlimit == -1):
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
-            else:
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
             EntryExists = True
         except:
             #update.effective_message.reply_text("no Entry found")
@@ -170,77 +145,25 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         Entryposition = -1        
     if(Entryposition != -1):
         if(broker == 'fundednext'):
-            trade['Symbol'] = 'US30'
-            trade['PositionSize'] = 0.03
+            trade['Symbol'] = 'XAUUSD'
+            trade['PositionSize'] = 0.01
             #SymbolExists = True
             #update.effective_message.reply_text("in DJ30")
-        elif(broker == 'vantage'):
-            trade['Symbol'] = 'DJ30'
-            trade['PositionSize'] = 0.1
+        #elif(broker == 'vantage'):
+        #    trade['Symbol'] = 'DJ30'
+        #    trade['PositionSize'] = 0.1
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
 
-    elif('Nasdaq'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('nasdaq')
+    elif('BTC USD'.lower() in signal.lower()):
+        Entryposition = signal.lower().find('BTC USD')
         #find Nas Entry
         try:
             if(Upperpositionlimit == -1):
                 firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
             else:
                 firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
-            EntryExists = True
-        except:
-            #update.effective_message.reply_text("no Entry found")
-            EntryFound = False
-        SymbolExists = True
-    elif('Nas100'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('nas100')
-        #find Nas Entry
-        try:
-            if(Upperpositionlimit == -1):
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
-            else:
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
-            EntryExists = True
-        except:
-            #update.effective_message.reply_text("no Entry found")
-            EntryFound = False
-        SymbolExists = True
-    elif('Nas'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('nas')
-        #find Nas Entry
-        try:
-            if(Upperpositionlimit == -1):
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[0]
-            else:
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[0]
-            EntryExists = True
-        except:
-            #update.effective_message.reply_text("no Entry found")
-            EntryFound = False
-        SymbolExists = True
-    elif('US100'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('us100')
-        #find Nas Entry
-        try:
-            if(Upperpositionlimit == -1):
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
-            else:
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
-            EntryExists = True
-        except:
-            #update.effective_message.reply_text("no Entry found")
-            EntryFound = False
-        SymbolExists = True
-    elif('US 100'.lower() in signal.lower()):
-        Entryposition = signal.lower().find('us 100')
-        #find Nas Entry
-        try:
-            if(Upperpositionlimit == -1):
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:])[1]
-            else:
-                firstentry = re.findall('\d+\.\d+|\d+', signal[Entryposition:Upperpositionlimit])[1]
             EntryExists = True
         except:
             #update.effective_message.reply_text("no Entry found")
@@ -248,31 +171,18 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         SymbolExists = True
     else: 
         Entryposition = -1
+        
     if(Entryposition != -1):
         if(broker == 'fundednext'):
-            trade['Symbol'] = 'NDX100'
-            trade['PositionSize'] = 0.03
+            trade['Symbol'] = 'BTCUSD'
+            trade['PositionSize'] = 0.01
             #SymbolExists = True
-        elif(broker == 'vantage'):
-            trade['Symbol'] = 'NAS100'
-            trade['PositionSize'] = 0.1
+        #elif(broker == 'vantage'):
+        #    trade['Symbol'] = 'NAS100'
+        #    trade['PositionSize'] = 0.1
         if(OrderLater == True):
             trade['Entry'] = float(firstentry)
         Entryposition = -1
-                
-        if(OrderLater == True):
-            trade['Entry'] = float(firstentry)
-        Entryposition = -1
-
-    elif('Goldole'.lower() in signal.lower()):
-        trade['Symbol'] = 'XAUUSD'
-        trade['PositionSize'] = 0.02
-        SymbolExists = True
-
-    elif('btcole'.lower() in signal.lower()):
-        trade['Symbol'] = 'BTCUSD'
-        trade['PositionSize'] = 0.02
-        SymbolExists = True
     
     if(SymbolExists == False):
         update.effective_message.reply_text("no Symbol found, ignore")
@@ -330,8 +240,7 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 update.effective_message.reply_text("no Entry found to substract")
                 EntryFound = False
     else:
-        #update.effective_message.reply_text("no TP found, TP +50 used")
-        firstTP = 50.
+        update.effective_message.reply_text("no TP found")
         TPposition = 0
         
     #update.effective_message.reply_text("TP1 = ")
@@ -393,15 +302,15 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
                 EntryFound = False
 
     else: 
-        #update.effective_message.reply_text("no TP2 defined, TP +100 used")
-        secondTP = 100.
+        #update.effective_message.reply_text("no TP2 defined, TP +50 used")
+        secondTP = 50.
         trade['TP2'] = secondTP
 
     #update.effective_message.reply_text("TP2 = ")
     #update.effective_message.reply_text(secondTP)
     trade['TP2'] = secondTP
     #TP3 runner with trailing SL
-    trade['TP3'] = 500.
+    trade['TP3'] = 80.
         
     #check SL:
     SLposition = signal.lower().find('sl')
@@ -424,24 +333,17 @@ def ParseSignal(update: Update, context: CallbackContext) -> dict:
         #update.effective_message.reply_text(stoploss)
 
         #validate stoploss for dow and nas:
-        if(stoploss > 200):
+        if(stoploss > 500):
             EntryFound = False
         else:
             trade['StopLoss'] = stoploss
 
-    #Correction for Gold:
-    if(trade['Symbol'] == 'XAUUSD'):
-        trade['StopLoss'] = 5
-        trade['TP1'] = 2
-        trade['TP2'] = 4
-        trade['TP3'] = 7
-
     #Correction for BTC:
     if(trade['Symbol'] == 'BTCUSD'):
-        trade['StopLoss'] = 400
-        trade['TP1'] = 200
-        trade['TP2'] = 400
-        trade['TP3'] = 700
+        trade['StopLoss'] = 3000
+        trade['TP1'] = 1000
+        trade['TP2'] = 1500
+        trade['TP3'] = 2500
     
     #update.effective_message.reply_text("You entered that message:")
     #update.effective_message.reply_text(trade)
