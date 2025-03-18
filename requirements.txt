@@ -17,10 +17,7 @@ iso8601==1.0.2
 itsdangerous==2.1.2
 Jinja2==3.1.2
 MarkupSafe==2.1.1
-metaapi-cloud-copyfactory-sdk==6.1.0
-metaapi-cloud-metastats-sdk==3.2.1
-metaapi-cloud-risk-management-sdk==1.2.1
-metaapi-cloud-sdk==20.9.0
+MetaTrader5==5.0.29
 multidict==6.0.2
 prettytable==3.3.0
 typing-extensions==3.10.0.0
